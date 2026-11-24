@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SphereGMB: Local SEO Auditor</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+
+<body>
+  <div class="popup-container">
+    <header class="popup-header">
+      <div class="brand-row">
+        <svg class="brand-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle class="brand-ring" cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" />
+          <circle class="brand-core" cx="12" cy="12" r="3.5" fill="currentColor" />
+          <g class="brand-orbit"><circle cx="12" cy="3" r="1.8" fill="currentColor" /></g>
+        </svg>
+        <div>
+          <h1 class="brand-title">SphereGMB</h1>
+          <p class="brand-tag">Local SEO auditor</p>
+        </div>
+      </div>
+      <span class="version-label">v1.5.0</span>
+    </header>
+
+    <nav class="popup-nav" role="tablist" aria-label="Popup sections">
+      <button class="nav-tab active" data-tab="tab-overview" role="tab" id="t-overview" aria-controls="tab-overview" aria-selected="true">Overview</button>
+      <button class="nav-tab" data-tab="tab-rank" role="tab" id="t-rank" aria-controls="tab-rank" aria-selected="false" tabindex="-1">Rank check</button>
+      <button class="nav-tab" data-tab="tab-decoder" role="tab" id="t-decoder" aria-controls="tab-decoder" aria-selected="false" tabindex="-1">CID decoder</button>
+      <button class="nav-tab" data-tab="tab-settings" role="tab" id="t-settings" aria-controls="tab-settings" aria-selected="false" tabindex="-1">Settings</button>
+    </nav>
+
+    <main class="popup-main">
+    <div class="tab-pane active" id="tab-overview" role="tabpanel" aria-labelledby="t-overview">
+      <div class="status-card">
+        <div class="status-info">
+          <label class="status-title" for="enabledToggle">Show SphereGMB on Google</label>
+          <span class="status-state" id="statusState" aria-live="polite">Active on Search and Maps</span>
+        </div>
+        <span class="toggle-switch">
+          <input type="checkbox" id="enabledToggle" role="switch" checked>
+          <span class="toggle-slider" aria-hidden="true"></span>
+        </span>
+      </div>
+
+      <section class="card-section" aria-labelledby="h-recent" id="recentSection" hidden>
+        <h2 class="section-title" id="h-recent">Recent reports</h2>
+        <ul class="recent-list" id="recentList"></ul>
+      </section>
+
+      <section class="card-section" aria-labelledby="h-what">
+        <h2 class="section-title" id="h-what">What it adds</h2>
+        <ul class="feature-list">
+          <li>All categories, the full profile, IDs and a completeness score on every business</li>
+          <li>Full report with related Google categories, services and a keyword finder</li>
+          <li>Bulk rank check for every category and your own keywords</li>
+          <li>Review export, photo and post audits, website speed check</li>
+          <li>People also ask collector on Search results</li>
+        </ul>
+      </section>
+
+      <div class="quick-links">
+        <a href="https://www.google.com/maps" target="_blank" rel="noopener noreferrer" class="quick-link-btn">Open Google Maps</a>
+        <a href="https://www.google.com/search?q=dentist+near+me" target="_blank" rel="noopener noreferrer" class="quick-link-btn">Try a local search</a>
+      </div>
+    </div>
+
+    <div class="tab-pane" id="tab-rank" role="tabpanel" aria-labelledby="t-rank" hidden>
+      <section class="card-section">
+        <h2 class="section-title">Check rankings in bulk</h2>
+        <p class="tool-desc" id="rankTarget">Open a business on Google Search or Maps first, or type its name below.</p>
+        <label class="field-label" for="rankName">Business name</label>
+        <input type="text" id="rankName" class="tool-input tool-input-block" autocomplete="off">
+        <label class="field-label" for="rankKeywords" style="margin-top:10px">Keywords, one per line</label>
+        <p class="field-hint" id="rankKwHint">The business's categories are filled in. Add your own.</p>
+        <textarea id="rankKeywords" class="tool-input tool-textarea" rows="5" aria-describedby="rankKwHint" spellcheck="false"></textarea>
+        <label class="check-row"><input type="checkbox" id="rankUseLoc" checked> Add a location to every keyword</label>
+        <input type="text" id="rankLoc" class="tool-input tool-input-block" placeholder="City or area" aria-label="Location to add" autocomplete="off">
+        <p class="field-hint" id="rankPreview" aria-live="polite"></p>
+        <div class="btn-row">
+          <button id="rankStart" class="tool-btn">Start rank check</button>
+          <button id="rankOpen" class="tool-btn-secondary">More options</button>
+        </div>
+      </section>
+    </div>
+
+    <div class="tab-pane" id="tab-decoder" role="tabpanel" aria-labelledby="t-decoder" hidden>
+      <section class="card-section">
+        <h2 class="section-title">Find a place's CID</h2>
+        <label class="field-label" for="decoderInput">Google Maps link, feature ID or CID</label>
+        <p class="field-hint" id="decoderHint">For example a Maps link, <code>0x89c259…:0x85e2…</code>, or a link with <code>ludocid=</code></p>
+        <div class="input-wrap">
+          <input type="text" id="decoderInput" class="tool-input" aria-describedby="decoderHint" autocomplete="off" spellcheck="false">
+          <button id="decodeBtn" class="tool-btn">Decode</button>
+        </div>
+
+        <dl id="decoderResults" class="decoder-results" aria-live="polite" hidden>
+          <dt class="res-label">Place CID</dt>
+          <dd class="res-value" id="resCid">-</dd>
+          <dt class="res-label">Feature ID</dt>
+          <dd class="res-value" id="resFeatureId">-</dd>
+          <dt class="res-label">Maps link</dt>
+          <dd><a href="https://www.google.com/maps" target="_blank" rel="noopener noreferrer" class="res-link" id="resMapsLink">Open in Maps</a></dd>
+        </dl>
+      </section>
+    </div>
+
+    <div class="tab-pane" id="tab-settings" role="tabpanel" aria-labelledby="t-settings" hidden>
+      <section class="card-section">
+        <h2 class="section-title">Saved data</h2>
+        <p class="tool-desc">Cached profiles (refreshed after 24 hours, oldest removed automatically), saved reports, rank history and the category list. Clearing keeps your settings.</p>
+        <div class="setting-row">
+          <span class="setting-sub" id="cacheCountLabel" aria-live="polite">0 places stored</span>
+          <button id="clearCacheBtn" class="tool-btn-secondary">Clear saved data</button>
+        </div>
+      </section>
+
+      <section class="card-section">
+        <h2 class="section-title">PageSpeed API key (optional)</h2>
+        <p class="tool-desc">Only for the Dashboard's website speed check. Google's keyless quota is shared and often used up; a free key from Google Cloud (PageSpeed Insights API) gives you your own. Stored only in this browser.</p>
+        <label class="field-label" for="psiKeyInput">API key</label>
+        <p class="field-hint" id="psiKeyHint">Starts with "AIza", 39 characters. Leave empty and save to remove it.</p>
+        <div class="input-wrap">
+          <input type="password" id="psiKeyInput" class="tool-input" aria-describedby="psiKeyHint psiKeyStatus" autocomplete="off" spellcheck="false">
+          <button id="psiKeySave" class="tool-btn">Save</button>
+        </div>
+        <p class="setting-sub" id="psiKeyStatus" aria-live="polite"></p>
+      </section>
+
+      <section class="card-section">
+        <h2 class="section-title">Privacy</h2>
+        <p class="tool-desc">SphereGMB has no servers of its own. It reads public profile data from Google pages you open and keeps a short cache in your browser. Only when you click: the speed check sends the website address to Google PageSpeed Insights, the keyword finder asks Google for search suggestions, and the category tools download Google's public category list from GitHub. Nothing else leaves your browser.</p>
+      </section>
+    </div>
+    </main>
+
+    <footer class="popup-footer">
+      <span class="footer-note">Open source, MIT license</span>
+    </footer>
+  </div>
+
+  <script src="../lib/category-tools.js"></script>
+  <script src="popup.js"></script>
+</body>
+
+</html>

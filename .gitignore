@@ -1,0 +1,45 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build and distribution
+dist/
+build/
+*.zip
+*.crx
+
+# Environment and sensitive keys
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+*.cert
+
+# Operating System files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE and Editor directories
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Chrome user data and profiles (NEVER commit user profiles or original extension files)
+User Data/
+*Default/
+Profile */
+ppjhoknoadhakhhdbbjjinlopefmehik/
+
+# Logs and debug files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# Local test output (screenshots can show your IP address, location or account)
+test-results/
+playwright-report/

@@ -1,0 +1,159 @@
+{
+  "manifest_version": 3,
+  "name": "SphereGMB: Local SEO & Profile Auditor",
+  "short_name": "SphereGMB",
+  "version": "1.5.0",
+  "description": "Open-source Google Business Profile auditor for Google Search & Maps: hidden categories, full profile data, review export, CID decoding and completeness scoring.",
+  "icons": {
+    "16": "assets/icons/icon16.png",
+    "32": "assets/icons/icon32.png",
+    "48": "assets/icons/icon48.png",
+    "64": "assets/icons/icon64.png",
+    "128": "assets/icons/icon128.png"
+  },
+  "action": {
+    "default_icon": {
+      "16": "assets/icons/icon16.png",
+      "32": "assets/icons/icon32.png",
+      "48": "assets/icons/icon48.png",
+      "64": "assets/icons/icon64.png",
+      "128": "assets/icons/icon128.png"
+    },
+    "default_popup": "popup/popup.html",
+    "default_title": "SphereGMB Auditor"
+  },
+  "background": {
+    "service_worker": "background/service-worker.js"
+  },
+  "permissions": [
+    "storage",
+    "debugger",
+    "downloads"
+  ],
+  "host_permissions": [
+    "https://www.google.com/*"
+  ],
+  "optional_host_permissions": [
+    "*://*/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.google.com/search*",
+        "https://www.google.com/maps*",
+        "https://www.google.co.uk/search*",
+        "https://www.google.co.uk/maps*",
+        "https://www.google.ca/search*",
+        "https://www.google.ca/maps*",
+        "https://www.google.com.au/search*",
+        "https://www.google.com.au/maps*",
+        "https://www.google.co.nz/search*",
+        "https://www.google.co.nz/maps*",
+        "https://www.google.ie/search*",
+        "https://www.google.ie/maps*",
+        "https://www.google.de/search*",
+        "https://www.google.de/maps*",
+        "https://www.google.fr/search*",
+        "https://www.google.fr/maps*",
+        "https://www.google.it/search*",
+        "https://www.google.it/maps*",
+        "https://www.google.es/search*",
+        "https://www.google.es/maps*",
+        "https://www.google.nl/search*",
+        "https://www.google.nl/maps*",
+        "https://www.google.be/search*",
+        "https://www.google.be/maps*",
+        "https://www.google.ch/search*",
+        "https://www.google.ch/maps*",
+        "https://www.google.at/search*",
+        "https://www.google.at/maps*",
+        "https://www.google.pt/search*",
+        "https://www.google.pt/maps*",
+        "https://www.google.pl/search*",
+        "https://www.google.pl/maps*",
+        "https://www.google.se/search*",
+        "https://www.google.se/maps*",
+        "https://www.google.dk/search*",
+        "https://www.google.dk/maps*",
+        "https://www.google.no/search*",
+        "https://www.google.no/maps*",
+        "https://www.google.fi/search*",
+        "https://www.google.fi/maps*",
+        "https://www.google.co.in/search*",
+        "https://www.google.co.in/maps*",
+        "https://www.google.com.bd/search*",
+        "https://www.google.com.bd/maps*",
+        "https://www.google.com.pk/search*",
+        "https://www.google.com.pk/maps*",
+        "https://www.google.lk/search*",
+        "https://www.google.lk/maps*",
+        "https://www.google.ae/search*",
+        "https://www.google.ae/maps*",
+        "https://www.google.com.sa/search*",
+        "https://www.google.com.sa/maps*",
+        "https://www.google.com.tr/search*",
+        "https://www.google.com.tr/maps*",
+        "https://www.google.co.za/search*",
+        "https://www.google.co.za/maps*",
+        "https://www.google.com.ng/search*",
+        "https://www.google.com.ng/maps*",
+        "https://www.google.com.sg/search*",
+        "https://www.google.com.sg/maps*",
+        "https://www.google.com.my/search*",
+        "https://www.google.com.my/maps*",
+        "https://www.google.com.ph/search*",
+        "https://www.google.com.ph/maps*",
+        "https://www.google.co.id/search*",
+        "https://www.google.co.id/maps*",
+        "https://www.google.co.jp/search*",
+        "https://www.google.co.jp/maps*",
+        "https://www.google.co.kr/search*",
+        "https://www.google.co.kr/maps*",
+        "https://www.google.com.br/search*",
+        "https://www.google.com.br/maps*",
+        "https://www.google.com.mx/search*",
+        "https://www.google.com.mx/maps*",
+        "https://www.google.com.ar/search*",
+        "https://www.google.com.ar/maps*",
+        "https://www.google.cl/search*",
+        "https://www.google.cl/maps*",
+        "https://www.google.com.co/search*",
+        "https://www.google.com.co/maps*",
+        "https://maps.google.com/*"
+      ],
+      "css": [
+        "content/styles/content.css"
+      ],
+      "js": [
+        "content/modules/utils.js",
+        "content/modules/cid-parser.js",
+        "content/modules/api.js",
+        "content/modules/category-ui.js",
+        "content/modules/audit-modal.js",
+        "content/modules/audit-engine.js",
+        "content/modules/csv-exporter.js",
+        "lib/post-analytics.js",
+        "content/modules/post-audit.js",
+        "content/modules/photo-audit.js",
+        "content/modules/review-scraper.js",
+        "content/modules/paa.js",
+        "content/modules/dom-serp.js",
+        "content/modules/dom-maps.js",
+        "content/modules/action-buttons.js",
+        "content/modules/rank-runner.js",
+        "content/content.js"
+      ],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "https://www.google.com/sorry/*"
+      ],
+      "js": [
+        "content/modules/utils.js",
+        "content/modules/rank-runner.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ]
+}

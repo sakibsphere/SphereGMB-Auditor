@@ -1,0 +1,43 @@
+name: Something stopped working on Google
+description: The widget, categories, export or a button broke on Google Search or Maps.
+labels: [selector, bug]
+body:
+  - type: input
+    id: url
+    attributes:
+      label: Page URL
+      description: The Google Search or Maps page where it broke.
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: What broke
+      options:
+        - Categories / widget missing
+        - Review export
+        - Profile CSV export
+        - Dashboard
+        - Photo or Post audit
+        - SERP Checker
+        - Popup
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: What happened vs what you expected
+    validations:
+      required: true
+  - type: textarea
+    id: console
+    attributes:
+      label: Console lines starting with [SphereGMB]
+      description: DevTools → Console, filter "SphereGMB".
+      render: text
+  - type: input
+    id: version
+    attributes:
+      label: Extension version and browser
+      placeholder: "v1.2.1, Chrome 142 on Windows"

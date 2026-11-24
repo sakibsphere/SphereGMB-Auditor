@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rank check | SphereGMB</title>
+  <link rel="icon" href="../assets/icons/icon48.png">
+  <link rel="stylesheet" href="pages.css">
+</head>
+<body>
+  <header class="topbar">
+    <span class="brand">
+      <span data-icon="sphere"></span>
+      <span class="brand-name">SphereGMB</span>
+      <span class="brand-sep" aria-hidden="true"></span>
+      <span class="brand-page">Rank check</span>
+    </span>
+    <div class="topbar-actions">
+      <button class="btn" type="button" data-act="copy" disabled><span data-icon="copy"></span><span data-label="Copy results">Copy results</span></button>
+      <button class="btn" type="button" data-act="csv" disabled><span data-icon="download"></span><span>CSV</span></button>
+    </div>
+  </header>
+
+  <main class="layout rank-layout" style="display:block;max-width:1100px">
+    <section class="section" aria-labelledby="h-setup">
+      <div class="section-head">
+        <div>
+          <h2 id="h-setup">Where does the business rank?</h2>
+          <p class="section-desc">One Google search per keyword, opened in a background tab, read and closed. Positions are from your own connection and location.</p>
+        </div>
+      </div>
+
+      <div class="cols-2" style="gap:0 36px">
+        <div>
+          <div class="field">
+            <label for="kw">Keywords, one per line</label>
+            <textarea id="kw" class="input" spellcheck="false" aria-describedby="kw-hint"></textarea>
+            <span class="hint" id="kw-hint">Up to 30. The business's categories are filled in for you; add your own below them.</span>
+          </div>
+          <div class="row" style="margin-top:10px">
+            <button class="btn" type="button" data-act="add-cats"><span data-icon="plus"></span><span>Add all categories</span></button>
+            <button class="btn" type="button" data-act="clear-kw">Clear</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="field">
+            <label for="t-name">Business name</label>
+            <input id="t-name" class="input" autocomplete="off">
+          </div>
+          <div class="row" style="margin-top:10px;align-items:flex-start">
+            <div class="field" style="flex:1;min-width:150px"><label for="t-cid">CID (optional)</label><input id="t-cid" class="input mono" inputmode="numeric" autocomplete="off"></div>
+            <div class="field" style="flex:1;min-width:150px"><label for="t-domain">Website domain (optional)</label><input id="t-domain" class="input" autocomplete="off" placeholder="example.com"></div>
+          </div>
+
+          <div class="field" style="margin-top:14px">
+            <label class="switch"><input type="checkbox" id="use-loc" checked> Add a location to every keyword</label>
+            <input id="loc" class="input" style="margin-top:6px" autocomplete="off" placeholder="City or area, e.g. Brooklyn NY" aria-label="Location to add">
+            <span class="hint" id="loc-preview"></span>
+          </div>
+
+          <div class="row" style="margin-top:14px;align-items:flex-start">
+            <div class="field" style="flex:2;min-width:200px">
+              <label for="mode">Results to check</label>
+              <select id="mode" class="input">
+                <option value="local">Map results (Local Finder, top 20)</option>
+                <option value="web">Web results (3-pack and website position)</option>
+              </select>
+            </div>
+            <div class="field" style="flex:1;min-width:110px">
+              <label for="delay">Pause between searches</label>
+              <select id="delay" class="input">
+                <option value="6">6 seconds</option>
+                <option value="10" selected>10 seconds</option>
+                <option value="20">20 seconds</option>
+                <option value="40">40 seconds</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:20px">
+        <button class="btn btn-primary" type="button" data-act="start"><span data-icon="play"></span><span>Start rank check</span></button>
+        <button class="btn" type="button" data-act="stop" hidden><span data-icon="stop"></span><span>Stop</span></button>
+        <span class="status" id="status" role="status" aria-live="polite"></span>
+      </div>
+      <div class="progress" id="progress" hidden><span></span></div>
+      <p class="note" style="margin-top:14px">Google may show a "verify you're human" page if you search a lot. SphereGMB then stops and tells you; it never tries to get around it. Keep the pause at 10 seconds or more for long lists.</p>
+    </section>
+
+    <section class="section" aria-labelledby="h-results" id="results-section" hidden>
+      <div class="section-head">
+        <div><h2 id="h-results">Results</h2><p class="section-desc" id="summary"></p></div>
+      </div>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th scope="col">#</th><th scope="col">Keyword</th><th scope="col">Map rank</th><th scope="col">Change</th><th scope="col">Website rank</th><th scope="col">Top result</th><th scope="col"><span class="sr-only">Open search</span></th></tr></thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="../lib/category-tools.js"></script>
+  <script src="common.js"></script>
+  <script src="rank.js"></script>
+</body>
+</html>

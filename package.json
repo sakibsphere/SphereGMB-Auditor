@@ -1,0 +1,50 @@
+{
+  "name": "sphere-gmb",
+  "version": "1.5.0",
+  "description": "Open-source Chrome extension (Manifest V3) that audits Google Business Profiles on Google Search and Maps: hidden categories, full profile data, review CSV export, CID decoding and completeness scoring.",
+  "directories": {
+    "doc": "docs",
+    "test": "test"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "check": "node scripts/check-syntax.js",
+    "test": "node test/test-suite.js && node test/test-dom-integration.js && node test/test-review-dialog.js && node test/test-rank-runner.js && node test/test-site-audit.js",
+    "verify": "npm run lint && npm run check && npm test",
+    "test:smoke": "node tests/e2e/live-smoke.js",
+    "test:smoke:mobile": "node tests/e2e/live-smoke.js --mobile",
+    "test:e2e": "node tests/e2e/run-live-tests.js popup",
+    "test:trusted-wheel": "node tests/e2e/live-trusted-wheel.js",
+    "test:reviews": "node tests/e2e/live-review-export.js",
+    "package": "node scripts/package.js",
+    "test:full": "node tests/e2e/full-feature-test.js",
+    "test:full:mobile": "node tests/e2e/full-feature-test.js --mobile",
+    "test:ui": "node tests/e2e/ui-audit.js"
+  },
+  "keywords": [
+    "chrome-extension",
+    "local-seo",
+    "google-business-profile",
+    "gmb-audit",
+    "seo-tool",
+    "open-source"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sakibsphere/SphereGMB-Auditor.git"
+  },
+  "bugs": {
+    "url": "https://github.com/sakibsphere/SphereGMB-Auditor/issues"
+  },
+  "homepage": "https://github.com/sakibsphere/SphereGMB-Auditor#readme",
+  "author": "Sakib's Sphere",
+  "license": "MIT",
+  "type": "commonjs",
+  "devDependencies": {
+    "@playwright/test": "^1.65.1",
+    "axe-core": "^4.10.3",
+    "eslint": "^9.39.1",
+    "globals": "^16.5.0",
+    "jsdom": "^26.1.0"
+  }
+}

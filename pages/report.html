@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile report | SphereGMB</title>
+  <link rel="icon" href="../assets/icons/icon48.png">
+  <link rel="stylesheet" href="pages.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#overview" aria-label="SphereGMB profile report, back to top">
+      <span class="brand-mark" data-icon="sphere"></span>
+      <span class="brand-name">SphereGMB</span>
+      <span class="brand-sep" aria-hidden="true"></span>
+      <span class="brand-page">Profile report</span>
+    </a>
+    <div class="topbar-actions" id="actions" hidden>
+      <button class="btn" type="button" data-act="copy"><span data-icon="copy"></span><span data-label="Copy report">Copy report</span></button>
+      <button class="btn" type="button" data-act="csv"><span data-icon="download"></span><span>Profile CSV</span></button>
+      <button class="btn" type="button" data-act="print"><span data-icon="print"></span><span>Print or PDF</span></button>
+      <button class="btn btn-primary" type="button" data-act="rank"><span data-icon="rank"></span><span>Check rankings</span></button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav class="side-nav" aria-label="Report sections" id="nav" hidden>
+      <ol>
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#fixes">Fix list</a></li>
+        <li><a href="#competitors">Competitors</a></li>
+        <li><a href="#info">Business information</a></li>
+        <li><a href="#categories">Categories</a></li>
+        <li><a href="#keywords">Keyword finder</a></li>
+        <li><a href="#audit">Audit checklist</a></li>
+        <li><a href="#sitecheck">Website check</a></li>
+        <li><a href="#google">Google Maps links</a></li>
+        <li><a href="#directories">Maps and directories</a></li>
+        <li><a href="#website">Website audit links</a></li>
+        <li><a href="#details">Hours and attributes</a></li>
+      </ol>
+    </nav>
+    <main id="main">
+      <p class="empty-state" id="loading" role="status">Loading the report…</p>
+    </main>
+  </div>
+
+  <script src="../lib/category-tools.js"></script>
+  <script src="../lib/pagespeed.js"></script>
+  <script src="../lib/report-links.js"></script>
+  <script src="../lib/benchmark.js"></script>
+  <script src="../lib/site-audit.js"></script>
+  <script src="common.js"></script>
+  <script src="report.js"></script>
+</body>
+</html>

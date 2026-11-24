@@ -1,0 +1,20 @@
+name: Feature request
+description: Suggest an audit check, export field or free integration.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What are you trying to do?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What should SphereGMB do?
+  - type: checkboxes
+    id: free
+    attributes:
+      label: Open-source constraints
+      options:
+        - label: Works without a paid API or account (or is optional with the user's own free-tier key)
