@@ -190,6 +190,7 @@ window.SphereGmb = window.SphereGmb || {};
         return;
       }
       const tone = r.score >= 80 ? 'good' : r.score >= 55 ? 'mid' : 'low';
+      ns.utils.saveAuditResult(data.featureId, 'posts', { total: r.total, perMonth: r.perMonth, lastDate: r.lastDate, firstDate: r.firstDate, lastYear: r.lastYear });
       const maxMonth = Math.max(1, ...r.monthly.map((m) => m.count));
       const since = r.daysSinceLast === 0 ? 'today' : r.daysSinceLast === 1 ? 'yesterday' : `${r.daysSinceLast} days ago`;
       body.innerHTML = `

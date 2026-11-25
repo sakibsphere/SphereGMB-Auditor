@@ -87,7 +87,7 @@ async function newTabFrom(context, trigger) {
 
     await check('A3', 'Toolbar has all 6 buttons', async () => {
       const labels = await page.$$eval(w('.sgmb-action-btn'), (els) => els.map((e) => e.textContent.trim()));
-      const expected = ['Export', 'Post Audit', 'Photo Audit', 'Review Audit', 'Dashboard', 'SERP Checker'];
+      const expected = ['Export', 'Post Audit', 'Media Audit', 'Review Audit', 'Dashboard', 'SERP Checker'];
       assert(JSON.stringify(labels) === JSON.stringify(expected), labels.join(','));
     });
 
@@ -104,7 +104,7 @@ async function newTabFrom(context, trigger) {
     });
 
     let report = null;
-    await check('A5', 'Dashboard opens the full report page with score and 11 checks', async () => {
+    await check('A5', 'Dashboard opens the full report page with score and 16 checks', async () => {
       [report] = await Promise.all([context.waitForEvent('page', { timeout: 15000 }), page.click(w('[data-action="dashboard"]'))]);
       report.on('pageerror', (e) => pageErrors.push(`report: ${e.message}`));
       await report.waitForSelector('.checks .check', { timeout: 15000 });
@@ -112,13 +112,14 @@ async function newTabFrom(context, trigger) {
         url: location.href,
         score: document.querySelector('.score-ring strong')?.textContent.trim(),
         checks: document.querySelectorAll('.checks .check').length,
-        unknown: document.querySelectorAll('.checks .check-unknown').length,
+        unknown: Array.from(document.querySelectorAll('.checks .check-unknown strong')).map((s) => s.textContent.trim()),
         title: document.querySelector('#biz-name')?.textContent.trim()
       }));
       assert(/^chrome-extension:\/\/.+\/pages\/report\.html\?id=/.test(d.url), d.url);
       assert(d.title === 'Tacombi', d.title);
-      assert(d.checks === 11, `${d.checks} checks`);
-      assert(d.unknown === 0, `${d.unknown} checks not run`);
+      assert(d.checks === 16, `${d.checks} checks`);
+      // Only fields Google does not publish may be unknown (the owner description).
+      assert(d.unknown.every((u) => /description/i.test(u)), `unknown checks: ${d.unknown.join(', ')}`);
       await report.waitForTimeout(1200);
       await report.screenshot({ path: path.join(OUT, `full-report${SUFFIX}.png`) });
       return `score ${d.score}`;
@@ -233,6 +234,38 @@ async function newTabFrom(context, trigger) {
       return `${r.checks} checks, score ${r.score}`;
     });
 
+    await check('A10g', 'Audit reports: Initial + Service List run, Excel and CSV download with the template sheets', async () => {
+      // Opened from a single profile: competitors come from a Maps search at the business's address.
+      const comp = await report.evaluate(() => {
+        const i = document.querySelector('input[name="audit-kind"][value="competitor"]');
+        return { disabled: i.disabled, checked: i.checked, note: i.closest('.audit-opt').textContent.replace(/\s+/g, ' '), desc: document.querySelector('#competitors .section-desc')?.textContent || '', status: document.getElementById('comp-search-status')?.textContent || '' };
+      });
+      assert(!comp.disabled && comp.checked && /around this business/.test(comp.note), `competitor option: ${comp.note}`);
+      assert(/searched from this business's address/.test(comp.desc), `competitors section: ${comp.desc}`);
+      // A different keyword searches again and updates the option.
+      await report.fill('#comp-kw', 'taco restaurant');
+      await report.press('#comp-kw', 'Enter');
+      await report.waitForFunction(() => /"taco restaurant" around its address|Google did not answer|No businesses found/.test(document.getElementById('comp-search-status').textContent), null, { timeout: 30000 });
+      const after = await report.evaluate(() => ({ status: document.getElementById('comp-search-status').textContent, note: document.querySelector('input[value="competitor"]').closest('.audit-opt').textContent }));
+      assert(/"taco restaurant"/.test(after.note), `note after search: ${after.note}`);
+      await report.click('[data-act="audit-run"]');
+      await report.waitForSelector('#audit-out [data-act="audit-xlsx"]', { timeout: 60000 });
+      const preview = await report.evaluate(() => Array.from(document.querySelectorAll('#audit-out details summary')).map((s) => s.textContent.replace(/\s+/g, ' ').trim()));
+      const hoursRow = await report.evaluate(() => Array.from(document.querySelectorAll('#audit-out tr')).map((tr) => Array.from(tr.cells).map((c) => c.textContent.trim())).find((r) => r[0] === 'Business hours'));
+      const [dl] = await Promise.all([report.waitForEvent('download', { timeout: 30000 }), report.click('[data-act="audit-xlsx"]')]);
+      const xlsxPath = path.join(OUT, `full-audit${SUFFIX}.xlsx`);
+      await dl.saveAs(xlsxPath);
+      const buf = fs.readFileSync(xlsxPath);
+      const text = buf.toString('utf8');
+      assert(buf[0] === 0x50 && buf[1] === 0x4b, 'not a zip/xlsx');
+      assert(text.includes('<sheet name="Initial GBP Audit"') && text.includes('<sheet name="Service List"'), 'sheets missing');
+      assert(hoursRow && hoursRow[2] === 'Pass' && /days|AM|PM/.test(hoursRow[1]), `hours row: ${JSON.stringify(hoursRow)}`);
+      const [csvDl] = await Promise.all([report.waitForEvent('download', { timeout: 30000 }), report.click('[data-act="audit-csv"]')]);
+      assert(/\.csv$/.test(csvDl.suggestedFilename()), csvDl.suggestedFilename());
+      assert(text.includes('<sheet name="GBP and Competitor Audit"'), 'competitor sheet missing');
+      return `${preview.join(' | ')}; ${comp.status} Then: ${after.status}; xlsx ${Math.round(buf.length / 1024)} KB`;
+    });
+
     await check('A10d', 'Website speed check responds on the report (result or clear message)', async () => {
       await report.click('[data-act="psi"]');
       await report.waitForFunction(() => !document.querySelector('[data-act="psi"]'), null, { timeout: 120000 });
@@ -249,13 +282,13 @@ async function newTabFrom(context, trigger) {
       return raw.includes('/sorry/') ? { url: decodeURIComponent(new URL(raw).searchParams.get('continue') || raw), captcha: true } : { url: raw, captcha: false };
     };
 
-    await check('A11', 'Photo Audit on Maps opens a Search photo-audit tab', async () => {
-      const { url, captcha } = await auditTabUrl('photo-audit');
+    await check('A11', 'Media Audit on Maps opens a Search media-audit tab', async () => {
+      const { url, captcha } = await auditTabUrl('media-audit');
       assert(/google\.com\/search\?q=Tacombi/.test(url) && /sphereGmbAudit=photo/.test(url), url);
       return captcha ? 'correct URL (Google showed its CAPTCHA page to automation)' : 'correct URL';
     });
 
-    await check('A12', 'Photo Audit does not open a drawer on Maps (it runs in the Search tab)', async () => {
+    await check('A12', 'Media Audit does not open a drawer on Maps (it runs in the Search tab)', async () => {
       await page.waitForTimeout(500);
       assert(!(await page.$('#sgmb-photo-audit-overlay')), 'a drawer opened on Maps');
     });
@@ -345,7 +378,37 @@ async function newTabFrom(context, trigger) {
         missing: document.querySelectorAll('#competitors .cols-2 > div:first-child .list-row').length
       }));
       await card.screenshot({ path: path.join(OUT, `full-report-competitors${SUFFIX}.png`), fullPage: false });
+      // Competitor audit sheet from the same search list.
+      await card.click('[data-act="audit-run"]');
+      await card.waitForSelector('#audit-out [data-act="audit-xlsx"]', { timeout: 90000 });
+      const compHead = await card.evaluate(() => {
+        const d = Array.from(document.querySelectorAll('#audit-out details')).find((x) => /Competitor/.test(x.querySelector('summary').textContent));
+        return d ? Array.from(d.querySelector('tr').cells).map((c) => c.textContent.trim()) : [];
+      });
+      await card.screenshot({ path: path.join(OUT, `full-audit-preview${SUFFIX}.png`) });
+      comp.auditHead = compHead;
+      // Custom competitor from a pasted Maps link replaces the search list.
+      await card.fill('#comp-link', 'https://www.google.com/maps/place/Wilkerson+Insurance+Agency/@32.91,-96.88,17z/data=!4m6!3m5!1s0x864c2945b1bd1b1b:0x4374e835d53256a2!8m2!3d32.9112209!4d-96.8858413');
+      await card.press('#comp-link', 'Enter');
+      await card.waitForSelector('#comp-list .comp-item', { timeout: 20000 });
+      const custom = await card.evaluate(() => ({
+        item: document.querySelector('#comp-list .comp-item strong').textContent,
+        note: document.querySelector('input[value="competitor"]').closest('.audit-opt').textContent
+      }));
+      assert(/Wilkerson/.test(custom.item) && /\(your list\)/.test(custom.note), `custom: ${custom.item} / ${custom.note}`);
+      await card.evaluate(() => { document.getElementById('audit-out').innerHTML = ''; });
+      await card.click('[data-act="audit-run"]');
+      await card.waitForSelector('#audit-out [data-act="audit-xlsx"]', { timeout: 90000 });
+      const customHead = await card.evaluate(() => {
+        const d = Array.from(document.querySelectorAll('#audit-out details')).find((x) => /Competitor/.test(x.querySelector('summary').textContent));
+        return d ? Array.from(d.querySelector('tr').cells).map((c) => c.textContent.trim()) : [];
+      });
+      // The template keeps three competitor columns; unused ones stay as blank slots.
+      assert(/^Competitor #1: Wilkerson/.test(customHead[2]) && customHead[3] === 'Competitor #2', `custom header: ${customHead.join(' | ')}`);
+      await card.click('[data-act="comp-remove"]');
+      assert(await card.$$eval('#comp-list .comp-item', (e) => e.length) === 0, 'remove left the item');
       await card.close();
+      assert(compHead.length === 5 && compHead.slice(2).every((h) => /^Competitor #\d: /.test(h)), `competitor header: ${compHead.join(' | ')}`);
       assert(title && title !== 'Business profile', title);
       assert(comp.rows >= 3, `competitor table has ${comp.rows} rows`);
       assert(/businesses in "mexican restaurant"/i.test(comp.desc), comp.desc);
@@ -385,7 +448,7 @@ async function newTabFrom(context, trigger) {
     await check('C1', 'Popup renders with version and active state', async () => {
       const v = await popup.textContent('.version-label');
       const state = await popup.textContent('#statusState');
-      assert(v === 'v1.5.0' && /Active/.test(state), `${v} / ${state}`);
+      assert(v === 'v1.6.0' && /Active/.test(state), `${v} / ${state}`);
       const recent = await popup.$$eval('#recentList a', (els) => els.length);
       assert(recent >= 1, 'recent reports list is empty');
       await popup.screenshot({ path: path.join(OUT, `popup-v14${SUFFIX}.png`) });

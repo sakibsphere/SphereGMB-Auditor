@@ -1,7 +1,7 @@
 /**
  * SphereGMB: Action Buttons Component
  * Two-row toolbar under the categories line:
- * - Row 1: [ Export ] [ Post Audit ] [ Photo Audit ] [ Review Audit ]
+ * - Row 1: [ Export ] [ Post Audit ] [ Media Audit ] [ Review Audit ]
  * - Row 2: [ Dashboard ] [ SERP Checker ]
  */
 
@@ -116,7 +116,7 @@ window.SphereGmb = window.SphereGmb || {};
         ns.postAudit.show(await ensureProfile(getData()));
       }, 'Audit every Google post: count, dates, length, calls to action', 'posts');
 
-      const photoAuditBtn = this.createButton('Photo Audit', 'sgmb-btn-photo-audit', async () => {
+      const photoAuditBtn = this.createButton('Media Audit', 'sgmb-btn-photo-audit', async () => {
         ns.photoAudit.show(await ensureProfile(getData()));
       }, 'Count photos and videos by category and download them', 'photos');
 

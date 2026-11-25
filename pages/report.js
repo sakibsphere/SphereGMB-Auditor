@@ -7,7 +7,7 @@
  * the user starts (category list download, Google suggestions, PageSpeed).
  */
 
-/* global SgmbPage, SphereGmbCategoryTools, SphereGmbReportLinks, SphereGmbBenchmark, SphereGmbSiteAudit, SphereGmbPageSpeed */
+/* global SgmbPage, SphereGmbCategoryTools, SphereGmbReportLinks, SphereGmbBenchmark, SphereGmbSiteAudit, SphereGmbPageSpeed, SphereGmbAuditSheets, SphereGmbXlsx */
 (function () {
   'use strict';
 
@@ -23,6 +23,12 @@
   let bench = null;
   let benchSource = '';
   let fixes = [];
+  let snapshot = {};
+  let cachePeers = [];
+  let customComps = [];
+  let localPeers = []; // Google Maps results searched from the business's address
+  let localKeyword = '';
+  let lastAudits = null;
   const PRIORITY_LABEL = { high: 'High', medium: 'Medium', low: 'Low' };
   const PRIORITY_BADGE = { high: 'badge-bad', medium: 'badge-mid', low: '' };
   const keywordState = { results: new Map(), selected: new Set() };
@@ -90,7 +96,7 @@
         <div class="stat"><dt>Rating</dt><dd>${data.rating ? `${esc(data.rating)} / 5` : 'None'}</dd></div>
         <div class="stat"><dt>Reviews</dt><dd>${fmt(data.numReviews)}</dd></div>
         <div class="stat"><dt>Categories</dt><dd>${(data.categories || []).length}</dd></div>
-        <div class="stat"><dt>Checks passed</dt><dd>${audit ? `${audit.checks.filter((x) => x.status === 'pass').length} of ${audit.checks.length}` : 'n/a'}</dd></div>
+        <div class="stat"><dt>Checks passed</dt><dd>${audit ? `${audit.checks.filter((x) => x.status === 'pass').length} of ${audit.checks.filter((x) => x.status !== 'unknown').length}` : 'n/a'}</dd></div>
       </dl>`;
   }
 
@@ -117,18 +123,23 @@
       return `
         <section class="section" id="competitors" aria-labelledby="h-comp">
           <div class="section-head"><div><h2 id="h-comp">Competitors</h2></div></div>
-          <p class="note">To compare this profile with its competitors, search the keyword on Google Maps (for example "${esc(((data.categories || [])[0] || 'dentist').toLowerCase())} ${esc(city())}"), let the results load, then open <strong>Dashboard</strong> on this business from that list. The Local Finder on Google Search works too.</p>
+          <p class="note">To compare this profile with its competitors, search the keyword on Google Maps (for example "${esc(((data.categories || [])[0] || 'dentist').toLowerCase())} ${esc(city())}"), let the results load, then open <strong>Dashboard</strong> on this business from that list. Or use <a href="#auditsheets">Find competitors around this business</a> in Audit reports.</p>
         </section>`;
     }
     const fmtVal = (v, digits) => (v === null || v === undefined ? 'n/a' : digits ? Number(v).toFixed(digits) : fmt(Math.round(v)));
     const verdict = { ahead: '<span class="badge badge-good">Ahead</span>', behind: '<span class="badge badge-bad">Behind</span>', even: '<span class="badge">About the same</span>', unknown: '<span class="muted">n/a</span>' };
     const from = benchSource === 'cache'
       ? `${bench.peers} businesses with the same primary category that you opened before`
-      : `the other ${bench.peers} businesses in "${esc(bench.keyword || 'this search')}"`;
+      : benchSource === 'local'
+        ? `the other ${bench.peers} top Google Maps results for "${esc(bench.keyword)}", searched from this business's address`
+        : `the other ${bench.peers} businesses in "${esc(bench.keyword || 'this search')}"`;
+    const pos = bench.position
+      ? `. This profile is <strong>#${bench.position}</strong> in that list`
+      : benchSource === 'local' ? `. This profile is <strong>not in the top ${localPeers.length}</strong> there` : '';
     return `
       <section class="section" id="competitors" aria-labelledby="h-comp">
         <div class="section-head">
-          <div><h2 id="h-comp">Competitors</h2><p class="section-desc">Compared with ${from}${bench.position ? `. This profile is <strong>#${bench.position}</strong> in that list` : ''}.</p></div>
+          <div><h2 id="h-comp">Competitors</h2><p class="section-desc">Compared with ${from}${pos}.</p></div>
         </div>
         <div class="table-wrap">
           <table class="data">
@@ -169,6 +180,376 @@
             : '<p class="muted">No website is linked to this profile, so there is nothing to check.</p>'}
         </div>
       </section>`;
+  }
+
+  /* ---------- Audit reports (agency sheets: Initial, Competitor, Service List) ---------- */
+
+  const MAX_CUSTOM_COMPETITORS = 3;
+  const customKey = () => `sgmb_comp_${data.featureId || slug(data.name)}`;
+
+  function competitorPool() {
+    const others = (list) => list.filter((p) => !SphereGmbBenchmark.sameBusiness(p, data));
+    if (customComps.length) return { list: customComps, source: 'custom' };
+    if (localPeers.length) return { list: others(localPeers).slice(0, 3), source: 'local' };
+    const fromSearch = others(Array.isArray(snapshot.peers) ? snapshot.peers : []);
+    if (fromSearch.length) return { list: fromSearch.slice(0, 3), source: 'search' };
+    return { list: others(cachePeers).slice(0, 3), source: cachePeers.length ? 'cache' : '' };
+  }
+
+  function auditKeyword() {
+    if (localPeers.length && !customComps.length) return localKeyword;
+    return snapshot.keyword || [((data.categories || [])[0] || '').toLowerCase(), city()].filter(Boolean).join(' ');
+  }
+
+  function competitorNote(pool = competitorPool()) {
+    if (!pool.list.length) return 'needs competitors: search them below or add your own';
+    const names = pool.list.map((p) => esc(p.name || 'Unnamed business')).join(', ');
+    if (pool.source === 'custom') return `against ${names} (your list)`;
+    if (pool.source === 'local') return `against ${names} (top Google Maps results for "${esc(localKeyword)}" around this business)`;
+    return `against ${names}${pool.source === 'cache' ? ' (businesses you opened before with the same category)' : ` (top results for "${esc(auditKeyword())}")`}`;
+  }
+
+  const hasPoint = () => Number.isFinite(data.latitude) && Number.isFinite(data.longitude);
+  // The primary category: opened from a single profile, the saved keyword is often just its name.
+  const defaultSearchKeyword = () => String((data.categories || [])[0] || '').toLowerCase().trim();
+
+  /** Google Maps search for the keyword, from the business's own address (no IP or VPN needed). */
+  async function searchLocal(keyword, timeoutMs = 12000) {
+    if (!keyword || !hasPoint()) return { results: [] };
+    const ask = chrome.runtime.sendMessage({ type: 'localSearch', payload: { query: keyword, lat: data.latitude, lng: data.longitude } });
+    const res = await Promise.race([ask, sleep(timeoutMs).then(() => ({ results: [], error: 'timeout' }))]);
+    return res && Array.isArray(res.results) ? res : { results: [], error: res?.error || 'failed' };
+  }
+
+  function localStatusText() {
+    const me = localPeers.find((p) => SphereGmbBenchmark.sameBusiness(p, data));
+    return me ? `This business is #${me.position} on Google Maps for "${localKeyword}" around its address.` : `This business is not in the top ${localPeers.length} on Google Maps for "${localKeyword}" around its address.`;
+  }
+
+  function applyLocalResults(keyword, results) {
+    // Search results carry the full category and attribute lists (checked against profile lookups).
+    localPeers = results.map((p) => ({ ...p, profileLoaded: true }));
+    localKeyword = keyword;
+    const b = SphereGmbBenchmark.benchmark(data, localPeers, { keyword });
+    if (b) {
+      bench = b;
+      benchSource = 'local';
+      fixes = SphereGmbBenchmark.fixList(audit, bench, data);
+    }
+  }
+
+  /** "Find top 3" in the Audit reports section: search again with the typed keyword. */
+  async function runCompetitorSearch(btn) {
+    const input = document.getElementById('comp-kw');
+    const status = document.getElementById('comp-search-status');
+    const keyword = input.value.trim().slice(0, 120);
+    if (!keyword) { status.textContent = 'Type a keyword, for example the main service or category.'; input.focus(); return; }
+    btn.disabled = true;
+    status.classList.remove('status-bad');
+    status.textContent = `Searching Google Maps for "${keyword}" from this business's address…`;
+    try {
+      const res = await searchLocal(keyword);
+      if (res.results.length < 2) {
+        status.classList.add('status-bad');
+        status.textContent = res.error ? `Google did not answer (${res.error}). Try again in a minute.` : `No businesses found for "${keyword}" around this address. Try a broader keyword.`;
+        return;
+      }
+      applyLocalResults(keyword, res.results);
+      status.textContent = `${localStatusText()}${customComps.length ? ' Your own list below still takes priority; remove it to use these.' : ''}`;
+      const old = document.getElementById('competitors');
+      if (old) { old.outerHTML = renderCompetitors(); fillIcons(document.getElementById('competitors')); }
+      refreshCustomComps();
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  function customListHtml() {
+    return customComps.map((c, i) => `
+      <li class="comp-item">
+        <span class="comp-num">${i + 1}</span>
+        <span class="comp-body"><strong>${esc(c.name || 'Unnamed business')}</strong>
+          <small>${esc([(c.categories || [])[0], c.rating ? `${c.rating} stars` : '', c.numReviews ? `${fmt(c.numReviews)} reviews` : '', c.address].filter(Boolean).join(' · '))}</small></span>
+        <button class="icon-btn" type="button" data-act="comp-remove" data-index="${i}" aria-label="Remove ${esc(c.name || 'this competitor')}"><span data-icon="cross"></span></button>
+      </li>`).join('');
+  }
+
+  /** Re-renders the custom list and the competitor option after the list changes. */
+  function refreshCustomComps() {
+    const list = document.getElementById('comp-list');
+    if (!list) return;
+    list.innerHTML = customListHtml();
+    fillIcons(list);
+    const pool = competitorPool();
+    const box = document.querySelector('input[name="audit-kind"][value="competitor"]');
+    if (box) {
+      const wasDisabled = box.disabled;
+      box.disabled = pool.list.length === 0;
+      if (box.disabled) box.checked = false;
+      else if (wasDisabled || pool.source === 'custom') box.checked = true;
+      box.closest('.audit-opt').querySelector('small').innerHTML = competitorNote(pool);
+    }
+    const full = customComps.length >= MAX_CUSTOM_COMPETITORS;
+    document.getElementById('comp-link').disabled = full;
+    document.querySelector('[data-act="comp-add"]').disabled = full;
+  }
+
+  async function saveCustomComps() {
+    try {
+      if (customComps.length) await chrome.storage.local.set({ [customKey()]: customComps });
+      else await chrome.storage.local.remove(customKey());
+    } catch (e) { /* the list still works for this visit */ }
+  }
+
+  /** Follows a maps.app.goo.gl share link to the place link it stands for. */
+  async function resolveShortLink(url) {
+    const res = await fetch(url, { credentials: 'omit', redirect: 'follow', signal: AbortSignal.timeout(15000) });
+    const fromUrl = SphereGmbReportLinks.parseMapsLink(res.url);
+    if (fromUrl && fromUrl.featureId) return fromUrl.featureId;
+    // A consent or app page can sit in between: the place link is still in the page.
+    const body = (await res.text()).slice(0, 3000000);
+    const m = body.match(/!1s(0x[0-9a-f]{1,16}:0x[0-9a-f]{1,16})/i) || body.match(/[?&](?:cid|ludocid)=(\d{6,20})/i);
+    const found = m && SphereGmbReportLinks.parseMapsLink(m[1].startsWith('0x') ? m[1] : `?cid=${m[1]}`);
+    return found && found.featureId ? found.featureId : '';
+  }
+
+  async function addCustomComp(btn) {
+    const input = document.getElementById('comp-link');
+    const status = document.getElementById('comp-status');
+    const say = (msg, bad = false) => { status.textContent = msg; status.classList.toggle('status-bad', bad); };
+    if (customComps.length >= MAX_CUSTOM_COMPETITORS) { say(`You can compare up to ${MAX_CUSTOM_COMPETITORS} competitors. Remove one first.`, true); return; }
+    const parsed = SphereGmbReportLinks.parseMapsLink(input.value);
+    if (!parsed) {
+      say('That does not look like a Google Maps link. Open the business on Google Maps and copy the address bar, or use Share > Copy link.', true);
+      input.focus();
+      return;
+    }
+    let granted = true;
+    if (parsed.shortUrl) {
+      // Straight from the click, so Chrome treats it as a user gesture.
+      try { granted = await chrome.permissions.request({ origins: ['https://maps.app.goo.gl/*'] }); } catch (e) { granted = false; }
+      if (!granted) { say('Share links need permission to read maps.app.goo.gl. Or open the link and paste the full address bar link instead.', true); return; }
+    }
+    btn.disabled = true;
+    input.disabled = true;
+    try {
+      say('Looking up the business on Google…');
+      const featureId = parsed.featureId || (await resolveShortLink(parsed.shortUrl));
+      if (!featureId) { say('Could not find a business behind that link. Paste the full Google Maps link instead.', true); return; }
+      const profile = await chrome.runtime.sendMessage({ type: 'getPlaceProfile', payload: { featureId } });
+      if (!profile || profile.error || !profile.name) { say('Google did not return a business for that link. Check it and try again.', true); return; }
+      const realId = profile.featureId || featureId;
+      if (realId === data.featureId || SphereGmbBenchmark.sameBusiness(profile, data)) { say('That is the business you are auditing. Add a competitor instead.', true); return; }
+      if (customComps.some((c) => c.featureId === realId)) { say(`${profile.name} is already on the list.`, true); return; }
+      customComps.push({ ...profile, featureId: realId, profileLoaded: true });
+      input.value = '';
+      say(`Added ${profile.name}.`);
+      await saveCustomComps();
+    } catch (err) {
+      say(`Could not add it: ${err.message}`, true);
+    } finally {
+      btn.disabled = false;
+      input.disabled = false;
+      refreshCustomComps();
+    }
+  }
+
+  function removeCustomComp(index) {
+    const [gone] = customComps.splice(index, 1);
+    const status = document.getElementById('comp-status');
+    if (gone && status) { status.textContent = `Removed ${gone.name || 'the competitor'}.`; status.classList.remove('status-bad'); }
+    saveCustomComps();
+    refreshCustomComps();
+    document.getElementById('comp-link')?.focus();
+  }
+
+  function renderAuditSheetsShell() {
+    const pool = competitorPool();
+    const compNote = competitorNote(pool);
+    const opt = (value, label, hint, checked = true, disabled = false) => `
+      <label class="audit-opt"><input type="checkbox" name="audit-kind" value="${value}" ${checked ? 'checked' : ''} ${disabled ? 'disabled' : ''}>
+        <span><strong>${label}</strong><small>${hint}</small></span></label>`;
+    const full = customComps.length >= MAX_CUSTOM_COMPETITORS;
+    return `
+      <section class="section" id="auditsheets" aria-labelledby="h-sheets">
+        <div class="section-head"><div><h2 id="h-sheets">Audit reports</h2><p class="section-desc">Run the agency audits and download them: Excel with one sheet per audit (the agency template layout) or CSV.</p></div></div>
+        <fieldset class="audit-picker">
+          <legend class="sr-only">Audits to run</legend>
+          ${opt('initial', 'Initial GBP Audit', 'Every profile item with existing info, pass or fail, proposed fix and status')}
+          ${opt('competitor', 'GBP and Competitor Audit', compNote, pool.list.length > 0, pool.list.length === 0)}
+          ${opt('services', 'Service List', "Google's predefined services for each category, ready to add")}
+        </fieldset>
+        <div class="comp-custom">
+          ${hasPoint() ? `
+          <label class="field-label" for="comp-kw">Find competitors around this business</label>
+          <p class="hint">Searches Google Maps for the keyword as if you were standing at this business's address, then takes the top 3 other businesses. No VPN or location changer needed.</p>
+          <div class="comp-add">
+            <input id="comp-kw" class="input" type="text" autocomplete="off" maxlength="120" value="${esc(localKeyword || defaultSearchKeyword())}" placeholder="for example: ${esc(defaultSearchKeyword() || 'dentist')}">
+            <button class="btn" type="button" data-act="comp-search"><span data-icon="search"></span><span>Find top 3</span></button>
+          </div>
+          <p class="status" id="comp-search-status" role="status" aria-live="polite">${localPeers.length ? esc(localStatusText()) : ''}</p>
+          <hr class="comp-sep">` : ''}
+          <label class="field-label" for="comp-link">Or add your own competitors (up to ${MAX_CUSTOM_COMPETITORS})</label>
+          <p class="hint">Paste a Google Maps link (the address bar or a Share link), a link with cid= or a CID. Your list replaces the top results in the GBP and Competitor Audit and is saved for this business.</p>
+          <div class="comp-add">
+            <input id="comp-link" class="input" type="text" inputmode="url" autocomplete="off" spellcheck="false" placeholder="https://www.google.com/maps/place/... or https://maps.app.goo.gl/..." ${full ? 'disabled' : ''}>
+            <button class="btn" type="button" data-act="comp-add" ${full ? 'disabled' : ''}><span data-icon="plus"></span><span>Add</span></button>
+          </div>
+          <p class="status" id="comp-status" role="status" aria-live="polite"></p>
+          <ol class="comp-list" id="comp-list">${customListHtml()}</ol>
+        </div>
+        <label class="switch" style="margin-top:12px"><input type="checkbox" id="audit-sites" ${data.website ? '' : 'disabled'}> Also check the websites (LocalBusiness markup, lead form, phone, offer, reviews). Chrome asks once for each site.</label>
+        <div class="row" style="margin-top:14px">
+          <button class="btn btn-primary" type="button" data-act="audit-run"><span data-icon="play"></span><span>Run audit</span></button>
+          <span class="status" id="audit-status" role="status" aria-live="polite"></span>
+        </div>
+        <div class="progress" id="audit-progress" hidden><span></span></div>
+        <div id="audit-out"></div>
+      </section>`;
+  }
+
+  async function profileFor(p) {
+    if (!p || !p.featureId) return { ...p };
+    try {
+      const fresh = await chrome.runtime.sendMessage({ type: 'getPlaceProfile', payload: { featureId: p.featureId } });
+      const merged = { ...p };
+      if (fresh && !fresh.error) {
+        for (const [k, v] of Object.entries(fresh)) {
+          const empty = v === null || v === undefined || v === '' || (Array.isArray(v) && !v.length);
+          if (!empty) merged[k] = v;
+        }
+        merged.profileLoaded = true;
+      }
+      return merged;
+    } catch (e) {
+      return { ...p };
+    }
+  }
+
+  async function siteSummary(url) {
+    try {
+      const res = await fetch(url, { credentials: 'omit', redirect: 'follow', signal: AbortSignal.timeout(20000) });
+      if (!res.ok) return null;
+      const doc = new DOMParser().parseFromString((await res.text()).slice(0, 3000000), 'text/html');
+      return SphereGmbAuditSheets.summariseSite(SphereGmbSiteAudit.auditSite(doc, { url, finalUrl: res.url, profile: data }), doc);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  async function runAudits(btn) {
+    const selected = Array.from(document.querySelectorAll('input[name="audit-kind"]:checked')).map((i) => i.value);
+    const status = document.getElementById('audit-status');
+    if (!selected.length) { status.textContent = 'Tick at least one audit.'; return; }
+    const pool = competitorPool();
+    const wantSites = document.getElementById('audit-sites').checked;
+    const targets = [data, ...(selected.includes('competitor') ? pool.list : [])];
+    let granted = false;
+    if (wantSites) {
+      // Straight from the click, so Chrome treats it as a user gesture.
+      const hosts = [...new Set(targets.map((p) => SphereGmbReportLinks.domainOf(p.website)).filter(Boolean))];
+      try { granted = hosts.length ? await chrome.permissions.request({ origins: hosts.flatMap((h) => [`*://${h}/*`, `*://*.${h}/*`]) }) : false; } catch (e) { granted = false; }
+    }
+    btn.disabled = true;
+    const bar = document.getElementById('audit-progress');
+    bar.hidden = false;
+    const step = (msg, ratio) => { status.textContent = msg; bar.firstElementChild.style.width = `${Math.round(ratio * 100)}%`; };
+    try {
+      step('Refreshing the profile from Google…', 0.1);
+      const business = await profileFor(data);
+      let competitors = [];
+      if (selected.includes('competitor')) {
+        step('Loading the competitors…', 0.3);
+        competitors = await Promise.all(pool.list.map(profileFor));
+      }
+      step('Reading saved Media and Post audit results…', 0.45);
+      const ids = [business, ...competitors].map((p) => p.featureId).filter(Boolean);
+      const raw = ids.length ? await SgmbPage.storageGet(ids.map((id) => `sgmb_audit_${id}`)) : {};
+      const stored = Object.fromEntries(ids.map((id) => [id, raw[`sgmb_audit_${id}`] || {}]));
+      step("Loading Google's category and service list…", 0.55);
+      let services = [];
+      let suggestions = (bench ? bench.missingCategories.map((c) => c.name) : []);
+      try {
+        const lib = (await SgmbPage.loadCategoryLibrary()).lib;
+        services = (business.categories || []).map((c) => {
+          const cat = CT.findCategory(lib, c);
+          return { category: c, services: (cat && lib.services[cat.id]) || [] };
+        });
+        suggestions = [...new Set([...suggestions, ...CT.relatedCategories(lib, business.categories || [], { limit: 8 }).map((r) => r.name)])];
+      } catch (e) { /* offline: the Service List shows the categories only */ }
+      const sites = {};
+      if (wantSites && granted) {
+        const withSite = targets.filter((p) => p.website);
+        for (let i = 0; i < withSite.length; i++) {
+          step(`Checking website ${i + 1} of ${withSite.length}…`, 0.6 + (0.3 * i) / withSite.length);
+          const summary = await siteSummary(withSite[i].website);
+          if (summary) sites[SphereGmbReportLinks.domainOf(withSite[i].website)] = summary;
+        }
+      }
+      step('Building the sheets…', 0.95);
+      lastAudits = {
+        business,
+        list: SphereGmbAuditSheets.buildAudits({
+          business, competitors, keyword: auditKeyword(), city: business.addressLocality || city(),
+          sites, stored, services, suggestions, now: Math.floor(Date.now() / 1000)
+        }, selected)
+      };
+      renderAuditResults(wantSites && !granted);
+      status.textContent = `Done: ${lastAudits.list.map((a) => a.name).join(', ')}.`;
+    } catch (err) {
+      status.textContent = `The audit stopped: ${err.message}`;
+    } finally {
+      btn.disabled = false;
+      bar.hidden = true;
+    }
+  }
+
+  function renderAuditResults(sitesDeclined) {
+    const out = document.getElementById('audit-out');
+    const cellHtml = (v) => (v === 'Pass' ? '<span class="badge badge-good">Pass</span>' : v === 'Fail' ? '<span class="badge badge-bad">Fail</span>' : esc(v));
+    out.innerHTML = `
+      ${sitesDeclined ? '<p class="note note-warn" style="margin-top:14px">Website access was not given, so the website rows say "not checked".</p>' : ''}
+      <div class="row" style="margin:16px 0 6px">
+        <button class="btn btn-primary" type="button" data-act="audit-xlsx"><span data-icon="download"></span><span>Download Excel</span></button>
+        <button class="btn" type="button" data-act="audit-csv"><span data-icon="download"></span><span>${lastAudits.list.length > 1 ? `Download CSV (${lastAudits.list.length} files)` : 'Download CSV'}</span></button>
+      </div>
+      ${lastAudits.list.map((a) => {
+        const body = a.csvRows.slice(1);
+        const fails = body.filter((r) => r[2] === 'Fail').length;
+        const passes = body.filter((r) => r[2] === 'Pass').length;
+        return `
+          <details class="audit-preview" ${lastAudits.list.length === 1 ? 'open' : ''}>
+            <summary><strong>${esc(a.name)}</strong> <span class="muted">${a.key === 'initial' ? `${passes} pass, ${fails} fail` : `${body.length} rows`}</span></summary>
+            <div class="table-wrap"><table class="data"><tbody>${a.csvRows.map((r, i) => `<tr>${r.map((v) => (i === 0 || r.length === 1 ? `<th scope="col">${esc(v)}</th>` : `<td>${cellHtml(v)}</td>`)).join('')}</tr>`).join('')}</tbody></table></div>
+          </details>`;
+      }).join('')}`;
+    fillIcons(out);
+  }
+
+  function auditFileBase() {
+    return `gbp-audit-${slug(lastAudits.business.name)}-${new Date().toISOString().slice(0, 10)}`;
+  }
+
+  function downloadAuditXlsx() {
+    if (!lastAudits) return;
+    const bytes = SphereGmbXlsx.buildXlsx(lastAudits.list.map((a) => a.sheet));
+    const blob = new Blob([bytes], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${auditFileBase()}.xlsx`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1500);
+  }
+
+  async function downloadAuditCsv() {
+    if (!lastAudits) return;
+    for (const a of lastAudits.list) {
+      downloadText(`${auditFileBase()}-${a.key}.csv`, SphereGmbAuditSheets.toCsv(a.csvRows));
+      await sleep(400); // browsers drop rapid back-to-back downloads
+    }
   }
 
   function renderInfo() {
@@ -265,17 +646,21 @@
         ${data.editorialSummary ? `<p class="muted" style="margin-top:8px">Google's summary: ${esc(data.editorialSummary)}</p>` : ''}
         <h3>Opening hours</h3><div class="kv">${hours}</div>
         <h3>Attributes</h3><div class="kv">${attrs}</div>
-        <h3>Website speed (mobile)</h3>
-        <div id="psi">
-          ${site ? `<p class="section-desc" style="margin-bottom:10px">Runs Google PageSpeed Insights on ${esc(SphereGmbReportLinks.domainOf(site))}. Takes 20 to 60 seconds.</p>
-            <button class="btn" type="button" data-act="psi">Check website speed</button>` : '<p class="muted">No website linked, so there is nothing to test.</p>'}
+        <h3>Website speed</h3>
+        <div id="speed">
+          ${site ? `<p class="section-desc" style="margin-bottom:10px">Free, no API key: loads ${esc(SphereGmbReportLinks.domainOf(site))} in a small window for a few seconds and reads Chrome's own timing (load time, Largest Contentful Paint, layout shift, page weight). Chrome asks once to read the site.</p>
+            <button class="btn btn-primary" type="button" data-act="speed">Measure speed in this browser</button>` : '<p class="muted">No website linked, so there is nothing to test.</p>'}
         </div>
+        ${site ? `<div id="psi" style="margin-top:14px">
+          <p class="hint" style="margin-bottom:8px">Google's lab test (mobile, PageSpeed Insights). Uses Google's shared free quota, or your own free key from the popup's Settings.</p>
+          <button class="btn" type="button" data-act="psi">Run Google PageSpeed test</button>
+        </div>` : ''}
       </section>`;
   }
 
   function render() {
     const main = document.getElementById('main');
-    main.innerHTML = renderHero() + renderFixes() + renderCompetitors() + renderInfo() + renderCategoriesShell() + renderKeywordsShell() + renderAudit() + renderSiteCheckShell() + renderLinks() + renderDetails()
+    main.innerHTML = renderHero() + renderAuditSheetsShell() + renderFixes() + renderCompetitors() + renderInfo() + renderCategoriesShell() + renderKeywordsShell() + renderAudit() + renderSiteCheckShell() + renderLinks() + renderDetails()
       + `<footer class="footer">Snapshot taken ${esc(new Date(window.__sgmbTs || Date.now()).toLocaleString())}. Public data read from Google by SphereGMB in your browser. Category list: community data from lobstr.io and Jepto (see README).</footer>`;
     document.title = `${data.name || 'Profile'} | SphereGMB report`;
     document.getElementById('actions').hidden = false;
@@ -562,6 +947,93 @@
     return toCsv(['Field', 'Value'], rows);
   }
 
+  /**
+   * Runs inside the measured page (chrome.scripting). Reads Chrome's own performance entries:
+   * navigation timing, Largest Contentful Paint and layout shifts (buffered), resources.
+   */
+  function collectPageMetrics() {
+    return new Promise((resolve) => {
+      const nav = performance.getEntriesByType('navigation')[0] || {};
+      const res = performance.getEntriesByType('resource');
+      let lcp = 0;
+      let cls = 0;
+      try {
+        new PerformanceObserver((list) => { for (const e of list.getEntries()) lcp = Math.max(lcp, e.renderTime || e.loadTime || e.startTime); }).observe({ type: 'largest-contentful-paint', buffered: true });
+        new PerformanceObserver((list) => { for (const e of list.getEntries()) if (!e.hadRecentInput) cls += e.value; }).observe({ type: 'layout-shift', buffered: true });
+      } catch (e) { /* older Chrome */ }
+      setTimeout(() => {
+        const bytes = (nav.transferSize || 0) + res.reduce((n, r) => n + (r.transferSize || 0), 0);
+        resolve({
+          ttfb: Math.round(nav.responseStart || 0),
+          dcl: Math.round(nav.domContentLoadedEventEnd || 0),
+          load: Math.round(nav.loadEventEnd || 0),
+          lcp: Math.round(lcp),
+          cls: Math.round(cls * 1000) / 1000,
+          requests: res.length + 1,
+          kb: Math.round(bytes / 1024),
+          url: location.href,
+          visible: document.visibilityState
+        });
+      }, 1200);
+    });
+  }
+
+  async function runSpeed(btn) {
+    const site = safeUrl(data.website);
+    const host = SphereGmbReportLinks.domainOf(site);
+    const box = document.getElementById('speed');
+    let granted = false;
+    try {
+      granted = await chrome.permissions.request({ origins: [`*://${host}/*`, `*://*.${host}/*`] });
+    } catch (e) { granted = false; }
+    if (!granted) {
+      box.insertAdjacentHTML('beforeend', '<p class="note note-warn" role="alert" style="margin-top:10px">Permission was not given, so the page could not be measured.</p>');
+      return;
+    }
+    btn.disabled = true;
+    btn.textContent = 'Measuring…';
+    let win = null;
+    try {
+      // A small unfocused window keeps the page visible, so Chrome records paint timings
+      // (background tabs do not report Largest Contentful Paint).
+      win = await chrome.windows.create({ url: site, focused: false, type: 'popup', width: 480, height: 820 });
+      const tabId = win.tabs[0].id;
+      await new Promise((resolve) => {
+        const done = () => { chrome.tabs.onUpdated.removeListener(onUpd); clearTimeout(timer); resolve(); };
+        const onUpd = (id, info) => { if (id === tabId && info.status === 'complete') setTimeout(done, 2500); };
+        const timer = setTimeout(done, 30000);
+        chrome.tabs.onUpdated.addListener(onUpd);
+      });
+      const [{ result }] = await chrome.scripting.executeScript({ target: { tabId }, func: collectPageMetrics });
+      renderSpeed(result);
+    } catch (err) {
+      box.innerHTML = `<p class="note note-warn" role="alert">${esc(/Cannot access|permission/i.test(err.message) ? 'The site redirected to another domain, so it could not be measured. Try the Google PageSpeed test below.' : `Could not measure the page: ${err.message}`)}</p><button class="btn" type="button" data-act="speed" style="margin-top:10px">Try again</button>`;
+    } finally {
+      if (win) chrome.windows.remove(win.id).catch(() => {});
+    }
+  }
+
+  function renderSpeed(m) {
+    // Core Web Vitals thresholds (web.dev/articles/vitals): LCP good <= 2.5 s, poor > 4 s;
+    // CLS good <= 0.1, poor > 0.25; TTFB good <= 0.8 s, poor > 1.8 s (web.dev/articles/ttfb).
+    const rate = (v, good, poor) => (v <= good ? 'good' : v <= poor ? 'mid' : 'bad');
+    const word = { good: 'Good', mid: 'Needs improvement', bad: 'Poor' };
+    const sec = (ms) => `${(ms / 1000).toFixed(1)} s`;
+    const lcpTone = m.lcp ? rate(m.lcp, 2500, 4000) : null;
+    const clsTone = rate(m.cls, 0.1, 0.25);
+    const ttfbTone = rate(m.ttfb, 800, 1800);
+    const box = document.getElementById('speed');
+    box.innerHTML = `
+      <dl class="stats" style="border-top:1px solid var(--line)">
+        <div class="stat"><dt>Largest Contentful Paint</dt><dd>${m.lcp ? `${sec(m.lcp)} <span class="badge badge-${lcpTone}">${word[lcpTone]}</span>` : 'n/a'}</dd></div>
+        <div class="stat"><dt>Layout shift (CLS)</dt><dd>${m.cls} <span class="badge badge-${clsTone}">${word[clsTone]}</span></dd></div>
+        <div class="stat"><dt>Server response (TTFB)</dt><dd>${sec(m.ttfb)} <span class="badge badge-${ttfbTone}">${word[ttfbTone]}</span></dd></div>
+        <div class="stat"><dt>Fully loaded</dt><dd>${sec(m.load || m.dcl)}</dd></div>
+      </dl>
+      <p class="hint" style="margin-top:8px">Page weight ${fmt(m.kb)} KB in ${m.requests} requests. Measured once on your connection and computer (desktop browser), so numbers vary between runs; Google's lab test below simulates a mid-range phone. Thresholds: Google's Core Web Vitals (LCP up to 2.5 s and CLS up to 0.1 are "good").</p>
+      <button class="btn" type="button" data-act="speed" style="margin-top:10px">Measure again</button>`;
+  }
+
   async function runPsi(btn) {
     const box = document.getElementById('psi');
     btn.disabled = true;
@@ -703,6 +1175,21 @@
       else if (act === 'psi') runPsi(el);
       else if (act === 'sheets') copyText(sheetsText(), el);
       else if (act === 'site') runSiteCheck(el);
+      else if (act === 'audit-run') runAudits(el);
+      else if (act === 'speed') runSpeed(el);
+      else if (act === 'audit-xlsx') downloadAuditXlsx();
+      else if (act === 'audit-csv') downloadAuditCsv();
+      else if (act === 'comp-add') addCustomComp(el);
+      else if (act === 'comp-search') runCompetitorSearch(el);
+      else if (act === 'comp-remove') removeCustomComp(Number(el.dataset.index));
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter') return;
+      const target = { 'comp-link': 'comp-add', 'comp-kw': 'comp-search' }[e.target.id];
+      if (target) {
+        e.preventDefault();
+        document.querySelector(`[data-act="${target}"]`)?.click();
+      }
     });
   }
 
@@ -725,19 +1212,27 @@
   }
 
   /**
-   * Competitors from the search the Dashboard was opened from; otherwise profiles with the same
-   * primary category that SphereGMB has cached (labelled as such, no list position).
+   * Competitors from the search the Dashboard was opened from. Opened from a single profile,
+   * Google Maps is searched for the primary category from the business's own address. Last
+   * resort: profiles with the same primary category that SphereGMB has cached (no position).
    */
   async function buildBenchmark(snap) {
     const BM = SphereGmbBenchmark;
     bench = BM.benchmark(data, Array.isArray(snap.peers) ? snap.peers : [], { keyword: snap.keyword || '' });
     benchSource = bench ? 'search' : '';
+    if (!bench && hasPoint() && defaultSearchKeyword()) {
+      try {
+        const res = await searchLocal(defaultSearchKeyword(), 8000);
+        if (res.results.length >= 2) applyLocalResults(defaultSearchKeyword(), res.results);
+      } catch (e) { /* fall back to cached profiles below */ }
+    }
     if (!bench && (data.categories || [])[0]) {
       const primary = CT.norm(data.categories[0]);
       const cached = (await SgmbPage.cachedProfiles())
         .filter((p) => CT.norm((p.categories || [])[0]) === primary)
         .map((p) => ({ ...p, profileLoaded: true }))
         .sort((a, b) => (b.numReviews || 0) - (a.numReviews || 0));
+      cachePeers = cached;
       bench = BM.benchmark(data, cached);
       if (bench) {
         bench.position = null;
@@ -756,10 +1251,15 @@
       document.getElementById('main').innerHTML = '<div class="empty-state"><h1 style="font-size:22px;margin-bottom:8px">Report not found</h1><p>This report is no longer saved. Open a business on Google Search or Maps and click <strong>Dashboard</strong> to make a new one.</p></div>';
       return;
     }
+    snapshot = snap;
     data = snap.data || {};
     audit = snap.audit && Array.isArray(snap.audit.checks) ? snap.audit : null;
     window.__sgmbTs = snap.ts;
     await buildBenchmark(snap);
+    try {
+      const saved = (await SgmbPage.storageGet(customKey()))[customKey()];
+      customComps = Array.isArray(saved) ? saved.slice(0, MAX_CUSTOM_COMPETITORS) : [];
+    } catch (e) { customComps = []; }
     render();
     wireActions();
     wireScrollSpy();

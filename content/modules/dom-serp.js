@@ -127,7 +127,23 @@ window.SphereGmb = window.SphereGmb || {};
       const siteLink = root.querySelector('a[data-attrid="visit_official_site"], a.ab_button[href^="http"]')
         || Array.from(root.querySelectorAll('a[href^="http"]')).find((a) => /^website$/i.test(text(a)));
 
+      // Only the Search panel shows these two; Google's place data and Maps do not.
+      const socialBox = root.querySelector('[data-attrid="kc:/common/topic:social media presence"]') || document.querySelector('[data-attrid="kc:/common/topic:social media presence"]');
+      const socialProfiles = socialBox ? Array.from(socialBox.querySelectorAll('a[href^="http"]')).map((a) => {
+        let host = '';
+        try { host = new URL(a.href).hostname.replace(/^www\./, ''); } catch (e) { host = ''; }
+        return { network: text(a) || host, url: ns.utils.safeUrl(a.href) };
+      }).filter((s, i, all) => s.url && all.findIndex((x) => x.network === s.network) === i) : null;
+      const reviewsBox = root.querySelector('[data-attrid="kc:/location/location:third_party_aggregator_ratings"]') || document.querySelector('[data-attrid="kc:/location/location:third_party_aggregator_ratings"]');
+      const thirdPartyReviews = reviewsBox ? Array.from(reviewsBox.querySelectorAll('a[href^="http"]')).map((a) => {
+        const t = text(a);
+        const m = t.match(/^(.*?)\s*([\d.]+)\s*\/\s*(\d+)\s*([\d,]+)?/);
+        return m ? { site: m[1].trim(), rating: `${m[2]}/${m[3]}`, votes: m[4] ? ns.utils.parseFirstNumber(m[4]) : null, url: ns.utils.safeUrl(a.href) } : null;
+      }).filter(Boolean) : null;
+
       return {
+        socialProfiles,
+        thirdPartyReviews,
         name,
         address: text(addressEl).replace(/^Address:\s*/i, ''),
         phone: text(phoneEl).replace(/^Phone:\s*/i, ''),
@@ -163,7 +179,11 @@ window.SphereGmb = window.SphereGmb || {};
         featureId: kp.featureId,
         placeCID: kp.placeCID,
         categories: domCategories,
-        categoriesSource: 'dom'
+        categoriesSource: 'dom',
+        // null = not shown on this page (unknown); [] would mean "panel loaded, none listed".
+        socialProfiles: kp.socialProfiles,
+        thirdPartyReviews: kp.thirdPartyReviews,
+        seenOnSearch: true
       };
 
       // Mount right after the subtitle / title block.
@@ -172,6 +192,9 @@ window.SphereGmb = window.SphereGmb || {};
       if (anchor && anchor !== root) anchor.insertAdjacentElement('afterend', container);
       else root.insertAdjacentElement('afterbegin', container);
       escapeClipping(container, root);
+      // Visible to DevTools and tests: what the Search panel offered for the audit sheets.
+      container.dataset.sgmbSocial = kp.socialProfiles ? kp.socialProfiles.map((s) => s.network).join(',') || 'none' : 'not-shown';
+      container.dataset.sgmbThirdParty = kp.thirdPartyReviews ? kp.thirdPartyReviews.map((s) => s.site).join(',') || 'none' : 'not-shown';
       container._businessData = businessData;
 
       ns.actionButtons.mountButtons(container, () => container._businessData);

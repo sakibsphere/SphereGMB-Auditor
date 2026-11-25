@@ -359,9 +359,9 @@ global.document.body.appendChild(kp);
 
   const row1 = container.querySelector('.sgmb-btn-row-1');
   const row2 = container.querySelector('.sgmb-btn-row-2');
-  assert.deepStrictEqual(row1.children.map((b) => b.textContent), ['Export', 'Post Audit', 'Photo Audit', 'Review Audit']);
+  assert.deepStrictEqual(row1.children.map((b) => b.textContent), ['Export', 'Post Audit', 'Media Audit', 'Review Audit']);
   assert.deepStrictEqual(row2.children.map((b) => b.textContent), ['Dashboard', 'SERP Checker']);
-  pass('Two-row toolbar: Export, Post Audit, Photo Audit, Review Audit / Dashboard, SERP Checker');
+  pass('Two-row toolbar: Export, Post Audit, Media Audit, Review Audit / Dashboard, SERP Checker');
 
   ns.categoryUI.hydrateCategories(container, {
     categories: ['Health insurance agency', 'Dental insurance agency', 'Life insurance agency'],
@@ -383,7 +383,7 @@ global.document.body.appendChild(kp);
   await tick();
   assert(postShown && photoShown, 'audit dialogs should open');
   assert(!sentMessages.some((m) => m.type === 'runAuditPhoto' || m.type === 'runAuditPost'), 'no new tab may be opened by the toolbar');
-  pass('Post/Photo Audit open in-page without spawning a tab');
+  pass('Post/Media Audit open in-page without spawning a tab');
 
   let reviewStarted = null;
   ns.reviewScraper.startExport = (data) => { reviewStarted = data; };

@@ -174,6 +174,56 @@ test('report links: built from IDs, missing inputs are left out, values encoded'
   assert.strictEqual(cityOf({ address: '1 Main St, Springfield, IL 62701' }), 'Springfield');
 });
 
+test('local competitor search: URL pinned to the address, ranked results parsed', () => {
+  const { mapsSearchUrl, parseMapsSearch } = require('../lib/place-parser.js');
+  const url = mapsSearchUrl('dental clinic & co', 40.1234567, -73.7654321);
+  assert(url.startsWith('https://www.google.com/search?tbm=map&'), url);
+  assert(url.includes('q=dental%20clinic%20%26%20co'), 'query is encoded');
+  assert(url.includes('!2d-73.7654321!3d40.1234567'), 'longitude then latitude');
+  const place = (fid, name, rating, reviews, cats) => {
+    const p = [];
+    p[4] = []; p[4][7] = rating; p[4][8] = reviews;
+    p[10] = fid; p[11] = name; p[13] = cats;
+    const row = []; row[14] = p;
+    return row;
+  };
+  const body = [['dental clinic', [
+    [null, null, 'meta row'],
+    place('0x1:0xa', 'First Clinic', 4.8, 120, ['Dentist', 'Cosmetic dentist']),
+    place('0x1:0xb', 'Second Clinic', 4.2, 30, ['Dentist']),
+    place('0x1:0xa', 'First Clinic', 4.8, 120, ['Dentist']),
+    place('', 'No ID', 5, 1, ['Dentist'])
+  ]]];
+  const res = parseMapsSearch(`)]}'\n${JSON.stringify(body)}`);
+  assert.deepStrictEqual(res.map((r) => [r.position, r.name, r.featureId, r.rating, r.numReviews]),
+    [[1, 'First Clinic', '0x1:0xa', 4.8, 120], [2, 'Second Clinic', '0x1:0xb', 4.2, 30]], 'meta, duplicate and ID-less rows dropped');
+  assert.deepStrictEqual(res[0].categories, ['Dentist', 'Cosmetic dentist']);
+  assert.deepStrictEqual(parseMapsSearch('not json'), []);
+  assert.deepStrictEqual(parseMapsSearch(')]}\'\n[]'), []);
+});
+
+test('custom competitor links: Maps links, CIDs and share links', () => {
+  const { parseMapsLink } = require('../lib/report-links.js');
+  const fid = '0x89c259a1b2c3d4e5:0x1a2b3c4d5e6f7081';
+  const place = `https://www.google.com/maps/place/Some+Cafe/@40.7,-73.9,17z/data=!3m1!4b1!4m6!3m5!1s${fid}!8m2!3d40.7!4d-73.9!16s%2Fg%2F11abc?entry=ttu`;
+  assert.deepStrictEqual(parseMapsLink(place), { featureId: fid });
+  assert.deepStrictEqual(parseMapsLink(place.replace(':', '%3A')), { featureId: fid }, 'URL-encoded colon');
+  assert.deepStrictEqual(parseMapsLink(`  ${fid.toUpperCase().replace(/X/g, 'x')}  `), { featureId: fid }, 'bare feature ID, any case');
+  // From a search: the query block comes first, the place is the last !1s0x… entry.
+  const searched = `https://www.google.com/maps/place/X/data=!4m10!1m2!2m1!1sdentist!3m6!1s0x1:0x2!8m2!3d1!4d2!1s${fid}`;
+  assert.deepStrictEqual(parseMapsLink(searched), { featureId: fid });
+  const cid = BigInt('0x1a2b3c4d5e6f7081').toString();
+  assert.deepStrictEqual(parseMapsLink(`https://maps.google.com/?cid=${cid}`), { featureId: '0x0:0x1a2b3c4d5e6f7081' });
+  assert.deepStrictEqual(parseMapsLink(`https://www.google.com/search?q=x&ludocid=${cid}#lrd=1`), { featureId: '0x0:0x1a2b3c4d5e6f7081' });
+  assert.deepStrictEqual(parseMapsLink(cid), { featureId: '0x0:0x1a2b3c4d5e6f7081' }, 'bare CID');
+  assert.deepStrictEqual(parseMapsLink('https://maps.app.goo.gl/AbC123xyz?g_st=ic'), { shortUrl: 'https://maps.app.goo.gl/AbC123xyz?g_st=ic' });
+  assert.strictEqual(parseMapsLink('99999999999999999999999'), null, 'too long for a CID');
+  assert.strictEqual(parseMapsLink('https://www.example.com/contact'), null);
+  assert.strictEqual(parseMapsLink('12345'), null, 'short numbers are not CIDs');
+  assert.strictEqual(parseMapsLink(''), null);
+  assert.strictEqual(parseMapsLink('https://maps.app.goo.gl.evil.com/x'), null, 'look-alike hosts are rejected');
+});
+
 test('regression: review fixes (CSV formulas, /url? website, non-Latin, strict name match)', () => {
   const ns = loadModules(['utils.js', 'rank-runner.js']);
   assert.strictEqual(ns.utils.csvSafe('=HYPERLINK("x")'), '\'=HYPERLINK("x")');
@@ -189,6 +239,52 @@ test('regression: review fixes (CSV formulas, /url? website, non-Latin, strict n
   const rows = [{ position: 1, name: 'Bright Dental Care', sponsored: false }, { position: 2, name: 'স্মাইল ডেন্টাল', sponsored: false }];
   assert.strictEqual(ns.rankRunner.matchTarget(rows, { name: 'Dental Care' }), null, 'no match in the middle of another name');
   assert.strictEqual(ns.rankRunner.matchTarget(rows, { name: 'স্মাইল ডেন্টাল' }).position, 2, 'Bengali names match');
+});
+
+test('audit sheets: template rows, pass/fail, competitors, services, CSV, xlsx', () => {
+  const { buildAudits, toCsv } = require('../lib/audit-sheets.js');
+  const { buildXlsx } = require('../lib/xlsx-writer.js');
+  const now = Math.floor(Date.UTC(2026, 10, 25) / 1000);
+  const business = {
+    name: 'Example Agency', featureId: '0x1:0x2', placeCID: '2', address: '1 Main St, Dallas, TX 75201', addressLocality: 'Dallas',
+    phone: '(555) 010-0000', website: 'https://example.test/', categories: ['Insurance agency', 'Auto insurance agency'],
+    hours: [{ day: 'Monday', hours: '9 AM–5 PM' }], holidayNotices: [{ holiday: 'Thanksgiving' }], photoCount: 12, logoUrl: 'https://img',
+    posts: [{ ts: now - 3 * 86400 }], rating: 4.8, numReviews: 40, attributes: [{ group: 'Payments', items: ['Credit cards'] }],
+    socialProfiles: [{ network: 'Facebook', url: 'https://facebook.com/example' }], thirdPartyReviews: [], profileLoaded: true
+  };
+  const comp = { name: 'Rival', featureId: '0x3:0x4', placeCID: '4', address: '2 Elm St, Plano, TX', categories: ['Insurance broker'], photoCount: 5, posts: [], rating: 4.1, numReviews: 300 };
+  const audits = buildAudits({ business, competitors: [comp], keyword: 'insurance dallas', city: 'Dallas', services: [{ category: 'Insurance agency', services: ['Auto', 'Home', 'Life', 'Renters', 'Flood', 'Boat', 'RV'] }], suggestions: ['Insurance broker'], now });
+  assert.deepStrictEqual(audits.map((a) => a.key), ['initial', 'competitor', 'services']);
+  const init = audits[0].csvRows;
+  const row = (label) => init.find((r) => r[0] === label);
+  assert.deepStrictEqual(init[1], ['Type', 'Existing Info', 'Pass/Fail', 'Proposed Info', 'Remarks', 'Status', 'Note']);
+  assert.strictEqual(row('Business hours')[1], '1 days 9 AM–5 PM');
+  assert.strictEqual(row('Business hours')[2], 'Pass');
+  assert.match(row('Business hours')[4], /Thanksgiving might affect/);
+  assert.strictEqual(row('Website link (with UTM Tracking Parameters)')[2], 'Fail');
+  assert.match(row('Website link (with UTM Tracking Parameters)')[3], /utm_source=google/);
+  assert.strictEqual(row('Business description')[2], '', 'not public: no pass/fail');
+  assert.strictEqual(row('Business description')[5], 'Needs Review');
+  assert.strictEqual(row('Add Facebook')[2], 'Pass');
+  assert.strictEqual(row('Add Youtube')[2], 'Fail', 'panel seen, network missing');
+  assert.strictEqual(row('Payments')[1], 'Credit cards');
+  assert.match(row('# of GBP Post Flow')[1], /^1 in the last 30 days; latest 3 days ago/);
+  assert(init.some((r) => r[0] === 'PROMINENCE AUDIT') && init.some((r) => r[0] === 'Landing Page CRO Audit'));
+  const compRows = audits[1].csvRows;
+  assert.deepStrictEqual(compRows[0], ['GBP & Competitor Audit', 'Example Agency', 'Competitor #1: Rival', 'Competitor #2', 'Competitor #3']);
+  assert.deepStrictEqual(compRows.find((r) => r[0] === 'Target Locality in Listing Address').slice(1, 3), ['Yes', 'No']);
+  assert.strictEqual(compRows.find((r) => r[0] === 'Review Count')[2], '300');
+  const svc = audits[2].csvRows;
+  assert.deepStrictEqual(svc[2], ['Insurance agency', 'Auto', 'Home', 'Life', 'Renters', 'Flood', 'Boat']);
+  assert.strictEqual(svc[3][0], 'Insurance agency (more)');
+  const csv = toCsv([['=SUM(A1)', 'ok']]);
+  assert.strictEqual(csv, '\uFEFF"\'=SUM(A1)","ok"', 'CSV formula guard');
+  const bytes = buildXlsx(audits.map((a) => a.sheet));
+  assert.strictEqual(String.fromCharCode(bytes[0], bytes[1]), 'PK', 'zip container');
+  const text = Buffer.from(bytes).toString('utf8');
+  assert(text.includes('<sheet name="Initial GBP Audit"') && text.includes('<sheet name="GBP and Competitor Audit"') && text.includes('<sheet name="Service List"'));
+  assert(text.includes('<mergeCell ref="A1:G1"/>') && text.includes('<formula1>"Pass,Fail"</formula1>') && text.includes('state="frozen"'));
+  assert(text.includes('rgb="FF351C75"') && text.includes('rgb="FFB4A7D6"'), 'template colours');
 });
 
 test('benchmark: medians, missing categories, prioritised fix list', () => {
@@ -313,6 +409,21 @@ test('place parser: Business Profile ID, claimed status, booking links', () => {
   const unclaimed = parsePlacePreview([null, null, null, null, null, null, p]);
   assert.strictEqual(unclaimed.claimed, false);
   assert.strictEqual(unclaimed.businessProfileId, '555', 'falls back to [227][0][5]');
+
+  // Photo total, posts and holiday notices (shapes from a live flagged response, Nov 2026).
+  p[37] = [[['id', 10, 12, null, null, null, ['https://img', '84 Photos']]], 84];
+  p[122] = [['Example Place', 'https://avatar'], [[null, [[['Quote prep list', 1], ['http://x.example', 2, 'http://x.example'], [' for Dallas.', 1]]], [1795420800, 1811232000], null, [11, null, 'Call now'], [['https://img']], 'postId', '3421007001698019893', null, null, null, null, '2 days ago']]];
+  p[203] = [[['Wednesday', 3, [2026, 11, 25], [['9 AM–6 PM']], 0, 1], ['Thursday', 4, [2026, 11, 26], [['9 AM–6 PM']], 0, 1, ['Thanksgiving might affect these hours', 'Thanksgiving', 2]]]];
+  const rich = parsePlacePreview([null, null, null, null, null, null, p]);
+  assert.strictEqual(rich.photoCount, 84);
+  assert.strictEqual(rich.posts.length, 1);
+  assert.deepStrictEqual({ date: rich.posts[0].date, text: rich.posts[0].text, cta: rich.posts[0].cta, images: rich.posts[0].images }, { date: '2026-11-23', text: 'Quote prep listhttp://x.example for Dallas.', cta: 'Call now', images: 1 });
+  assert.strictEqual(rich.locationId, '3421007001698019893');
+  assert.deepStrictEqual(rich.holidayNotices, [{ holiday: 'Thanksgiving', day: 'Thursday', date: '2026-11-26' }]);
+  assert.strictEqual(rich.hours.length, 2);
+  assert.strictEqual(rich.descriptionPublic, false);
+  const { placeRequestUrl } = require('../lib/place-parser.js');
+  assert(placeRequestUrl('0x1:0x2').includes('!1s0x1%3A0x2!2s!12m4'), 'request carries Maps feature groups');
 });
 
 test('place parser: tolerates garbage and empty payloads', () => {
@@ -334,11 +445,40 @@ test('CID decoding: feature ID, cid= and ludocid= links', () => {
 
 test('audit engine: complete profile scores 100, gaps are reported', () => {
   const ns = loadModules(['utils.js', 'audit-engine.js']);
-  const full = { ...parsePlacePreview(fixture), profileLoaded: true, categoriesSource: 'profile', rating: 4.8, numReviews: 2867 };
+  const now = Math.floor(Date.UTC(2026, 10, 25) / 1000);
+  const full = { ...parsePlacePreview(fixture), profileLoaded: true, categoriesSource: 'profile', rating: 4.8, numReviews: 2867, claimed: true };
   full.description = 'x'.repeat(300);
   full.attributes = [{ group: 'Service options', items: ['Dine-in', 'Takeout', 'Delivery'] }];
-  const r = ns.auditEngine.audit(full);
+  full.website = 'https://example.com/?utm_source=google';
+  full.photoCount = 120;
+  full.holidayNotices = [];
+  full.posts = [{ ts: now - 2 * 86400, date: '2026-11-23' }, { ts: now - 9 * 86400 }];
+  const r = ns.auditEngine.audit(full, now);
   assert.strictEqual(r.score, 100, JSON.stringify(r.checks.filter((c) => c.points < c.max)));
+  assert.strictEqual(r.checks.reduce((s, c) => s + c.max, 0), 100, 'weights add up to 100');
+  assert.strictEqual(r.checks.find((c) => c.id === 'posts').detail, 'Latest post 2 days ago, 2 in the last 30 days.');
+
+  // A description Google does not show publicly is unknown and costs nothing.
+  const noDesc = ns.auditEngine.audit({ ...full, description: '' }, now);
+  assert.strictEqual(noDesc.checks.find((c) => c.id === 'description').status, 'unknown');
+  assert.strictEqual(noDesc.score, 100, 'unverifiable fields are left out of the score');
+  // Hours present + an unconfirmed holiday: hours pass, holiday hours warn.
+  const holiday = ns.auditEngine.audit({ ...full, holidayNotices: [{ holiday: 'Thanksgiving' }] }, now);
+  assert.strictEqual(holiday.checks.find((c) => c.id === 'hours').status, 'pass');
+  assert.match(holiday.checks.find((c) => c.id === 'holiday-hours').detail, /Thanksgiving might affect/);
+  assert.strictEqual(ns.auditEngine.hoursSummary([{ day: 'Monday', hours: '9 AM–5 PM' }, { day: 'Tuesday', hours: '9 AM–5 PM' }, { day: 'Sunday', hours: 'Closed' }]), '2 days 9 AM–5 PM, closed Sun');
+  // A loaded profile with no posts / holidays has those keys missing (mergeProfile skips empty
+  // lists): that means "none", not "unknown".
+  const noLists = { ...full };
+  delete noLists.posts;
+  delete noLists.holidayNotices;
+  const none = ns.auditEngine.audit(noLists, now);
+  assert.strictEqual(none.checks.find((c) => c.id === 'posts').status, 'warn');
+  assert.strictEqual(none.checks.find((c) => c.id === 'holiday-hours').status, 'pass');
+  // Stale posting and an unclaimed profile.
+  const stale = ns.auditEngine.audit({ ...full, claimed: false, posts: [{ ts: now - 60 * 86400 }] }, now);
+  assert.strictEqual(stale.checks.find((c) => c.id === 'claimed').status, 'fail');
+  assert.match(stale.checks.find((c) => c.id === 'posts').detail, /60 days ago/);
 
   const thin = ns.auditEngine.audit({ name: 'Best Cheap Plumber - Dallas', categories: ['Plumber'], profileLoaded: true, categoriesSource: 'profile' });
   assert(thin.score < 40, `thin profile scored ${thin.score}`);

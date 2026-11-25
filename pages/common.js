@@ -132,8 +132,8 @@
   async function cachedProfiles() {
     // Read only the cache keys, not every stored value (the category list alone is ~700 KB).
     const keys = typeof chrome.storage.local.getKeys === 'function'
-      ? (await chrome.storage.local.getKeys()).filter((k) => k.startsWith('sgmb_v3_place_'))
-      : Object.keys(await storageGet(null)).filter((k) => k.startsWith('sgmb_v3_place_'));
+      ? (await chrome.storage.local.getKeys()).filter((k) => k.startsWith('sgmb_v4_place_'))
+      : Object.keys(await storageGet(null)).filter((k) => k.startsWith('sgmb_v4_place_'));
     if (!keys.length) return [];
     const entries = await storageGet(keys);
     return keys.map((k) => entries[k]?.data).filter((p) => p && p.categories);

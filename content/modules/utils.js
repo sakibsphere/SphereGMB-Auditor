@@ -32,7 +32,8 @@ window.SphereGmb = window.SphereGmb || {};
     'priceLevel', 'address', 'neighborhood', 'street', 'addressLocality', 'zipCode', 'region',
     'country', 'plusCode', 'phone', 'phoneIntl', 'website', 'websiteDomain', 'latitude', 'longitude',
     'timezone', 'description', 'editorialSummary', 'hours', 'attributes', 'mapsUrl',
-    'businessProfileId', 'claimed', 'bookingLinks'
+    'businessProfileId', 'claimed', 'bookingLinks', 'descriptionPublic', 'holidayNotices', 'photoCount',
+    'logoUrl', 'posts', 'locationId'
   ];
 
   ns.utils = {
@@ -108,6 +109,21 @@ window.SphereGmb = window.SphereGmb || {};
         .replace(/[\u200B-\u200F\u202A-\u202E\uFEFF\u00A0\uE000-\uF8FF]/g, ' ')
         .replace(/\s+/g, ' ')
         .trim();
+    },
+
+    /**
+     * Remembers the result of a Media / Post audit for a business (by feature ID), so the full
+     * audit report can use real counts instead of leaving those cells empty.
+     */
+    saveAuditResult(featureId, kind, result) {
+      if (!featureId || !ns.utils.isExtensionAlive()) return;
+      const key = `sgmb_audit_${featureId}`;
+      try {
+        chrome.storage.local.get(key, (r) => {
+          const prev = (r && r[key]) || {};
+          chrome.storage.local.set({ [key]: { ...prev, [kind]: { ...result, ts: Date.now() } } });
+        });
+      } catch (e) { /* extension reloaded */ }
     },
 
     /** True when a result card / row carries Google's "Sponsored" label (an ad). */

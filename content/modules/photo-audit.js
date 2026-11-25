@@ -1,5 +1,5 @@
 /**
- * SphereGMB: Photo Audit
+ * SphereGMB: Media Audit (photos and videos)
  * Opens Google's photo viewer from the Search knowledge panel ("See photos"), walks every
  * category tab, loads every tile and counts photos and videos per category. Photos can be
  * downloaded at original size and videos as MP4. On Maps it opens a Search tab and runs there.
@@ -152,7 +152,11 @@ window.SphereGmb = window.SphereGmb || {};
         // Video files: the viewer preloads <video> elements for the current category.
         viewer.querySelectorAll('video').forEach((v) => {
           const src = v.currentSrc || v.src || v.querySelector('source')?.src || '';
-          if (/googleusercontent\.com/.test(src)) videos.set(src, { url: src });
+          // The same video appears at several sizes ("...=m18", "...=m22"): count it once.
+          if (/googleusercontent\.com/.test(src)) {
+            const key = src.split('=')[0];
+            if (!videos.has(key)) videos.set(key, { url: src });
+          }
         });
       }
 
@@ -162,19 +166,16 @@ window.SphereGmb = window.SphereGmb || {};
       const all = categories.All || categories[Object.keys(categories)[0]] || { total: 0, videos: 0 };
       const videoTotal = Object.entries(categories).find(([k]) => /video/i.test(k))?.[1].total ?? all.videos;
       const byOwner = Object.entries(categories).find(([k]) => /owner/i.test(k))?.[1].total;
-      // Google's "All" tab does not always load every item (a "By owner" tab can show more), so
-      // the counts use whichever is larger: the tab's own number or the unique items found
-      // across every tab. That keeps the numbers equal to what the download buttons save.
-      const videoCount = Math.max(videoTotal || 0, videos.size);
-      const photoCount = Math.max(0, all.total - (all.videos || 0), photos.size);
-      const grand = Math.max(all.total, photoCount + videoCount, byOwner || 0);
+      // The headline numbers are exactly the unique items found across every tab, i.e. what the
+      // download buttons save. Tab totals are kept separately because Google's tabs overlap
+      // ("All" can show fewer items than "By owner") and must not be presented as the total.
       return {
         categories,
-        total: grand,
-        videoCount,
-        photoCount,
+        photoCount: photos.size,
+        videoCount: videos.size,
+        videoTabCount: videoTotal || 0,
+        allTabCount: all.total || 0,
         ownerCount: byOwner,
-        customerCount: byOwner === undefined ? undefined : Math.max(0, grand - byOwner),
         photos: Array.from(photos.values()),
         videos: Array.from(videos.values())
       };
@@ -196,7 +197,7 @@ window.SphereGmb = window.SphereGmb || {};
         const r = await this.collect((m) => this.setStatus(m));
         this.render(data, r);
       } catch (err) {
-        ns.utils.log('Photo audit failed:', err);
+        ns.utils.log('Media audit failed:', err);
         this.renderError(data, 'Google\'s photo viewer changed or didn\'t load. Close it if it is open, then try again.');
       } finally {
         this.running = false;
@@ -218,10 +219,10 @@ window.SphereGmb = window.SphereGmb || {};
       overlay.id = OVERLAY_ID;
       overlay.className = 'sgmb-modal-overlay';
       overlay.innerHTML = `
-        <div class="sgmb-modal-card" role="dialog" aria-modal="true" aria-label="Photo audit">
+        <div class="sgmb-modal-card" role="dialog" aria-modal="true" aria-label="Media audit">
           <div class="sgmb-modal-header">
             <div class="sgmb-modal-title-group">
-              <div class="sgmb-modal-badge">${ns.utils.icons.photos}Photo audit</div>
+              <div class="sgmb-modal-badge">${ns.utils.icons.photos}Media audit</div>
               <h2 class="sgmb-modal-title">${esc(data.name || 'Business profile')}</h2>
               <div class="sgmb-modal-sub">${esc(data.categories?.[0] || '')}</div>
             </div>
@@ -254,19 +255,32 @@ window.SphereGmb = window.SphereGmb || {};
         return;
       }
       const tone = r.photoCount >= 50 ? 'good' : r.photoCount >= 15 ? 'mid' : 'low';
+      ns.utils.saveAuditResult(data.featureId, 'media', { photos: r.photoCount, videos: Math.max(r.videoCount, r.videoTabCount), ownerCount: r.ownerCount ?? null, categories: Object.keys(r.categories) });
+      // Google's own total (photos and videos) from the profile data, when known.
+      const googleTotal = typeof data.photoCount === 'number' ? data.photoCount : null;
+      const found = r.photoCount + r.videoCount;
+      const customers = googleTotal !== null && typeof r.ownerCount === 'number' ? Math.max(0, googleTotal - r.ownerCount) : null;
+      const gapNote = googleTotal !== null && googleTotal > found
+        ? `Google reports ${googleTotal.toLocaleString()} items; its photo viewer loaded ${found.toLocaleString()} unique ones. The rest are usually older customer uploads Google no longer shows in the viewer.`
+        : '';
+      const videoNote = r.videoTabCount > r.videoCount
+        ? `The Videos tab lists ${r.videoTabCount}; ${r.videoCount} could be saved as files.`
+        : 'Unique, ready to download';
       body.innerHTML = `
         <div class="sgmb-stat-strip">
-          <div class="sgmb-metric-card"><div class="sgmb-metric-label">Photos</div><div class="sgmb-metric-val sgmb-tone-text-${tone}">${r.photoCount}</div><div class="sgmb-metric-hint">Unique, across all tabs</div></div>
-          <div class="sgmb-metric-card"><div class="sgmb-metric-label">Videos</div><div class="sgmb-metric-val">${r.videoCount}</div><div class="sgmb-metric-hint">Unique, across all tabs</div></div>
-          <div class="sgmb-metric-card"><div class="sgmb-metric-label">From the owner</div><div class="sgmb-metric-val">${r.ownerCount ?? '-'}</div><div class="sgmb-metric-hint">${r.customerCount === undefined ? 'No "By owner" tab' : `${r.customerCount} from customers`}</div></div>
+          <div class="sgmb-metric-card"><div class="sgmb-metric-label">On Google</div><div class="sgmb-metric-val">${googleTotal === null ? '-' : googleTotal.toLocaleString()}</div><div class="sgmb-metric-hint">Google's own total, photos and videos</div></div>
+          <div class="sgmb-metric-card"><div class="sgmb-metric-label">Photos found</div><div class="sgmb-metric-val sgmb-tone-text-${tone}">${r.photoCount}</div><div class="sgmb-metric-hint">Unique, ready to download</div></div>
+          <div class="sgmb-metric-card"><div class="sgmb-metric-label">Videos found</div><div class="sgmb-metric-val">${r.videoCount}</div><div class="sgmb-metric-hint">${esc(videoNote)}</div></div>
+          <div class="sgmb-metric-card"><div class="sgmb-metric-label">From the owner</div><div class="sgmb-metric-val">${r.ownerCount ?? '-'}</div><div class="sgmb-metric-hint">${r.ownerCount === undefined ? 'No "By owner" tab' : customers !== null ? `About ${customers.toLocaleString()} from customers` : '"By owner" tab'}</div></div>
         </div>
+        ${gapNote ? `<p class="sgmb-section-desc" style="margin-top:8px">${esc(gapNote)}</p>` : ''}
         <div class="sgmb-modal-section">
           <h3 class="sgmb-section-title">By category</h3>
           <table class="sgmb-table">
             <thead><tr><th>Category</th><th class="sgmb-num">Items</th><th class="sgmb-num">Videos</th></tr></thead>
             <tbody>${Object.entries(r.categories).map(([k, v]) => `<tr><td>${esc(k)}</td><td class="sgmb-num">${v.total}</td><td class="sgmb-num">${v.videos}</td></tr>`).join('')}</tbody>
           </table>
-          <p class="sgmb-section-desc" style="margin-top:8px">Counts are what Google loads in its photo viewer. Google lists "All" with photos and videos together.</p>
+          <p class="sgmb-section-desc" style="margin-top:8px">Items per tab as Google's photo viewer shows them. Tabs overlap (one photo can be in "All", "By owner" and "Exterior"), so they do not add up to the total.</p>
         </div>
         <div class="sgmb-modal-section">
           <h3 class="sgmb-section-title">Photos (${r.photos.length})</h3>

@@ -1,5 +1,24 @@
 # Changelog
 
+## 1.6.0, 2026-11-25
+
+Accurate numbers, a full agency audit you can download, and a free speed test.
+
+New
+- **Audit reports** (report page): tick Initial GBP Audit, GBP and Competitor Audit and/or Service List, run, and download them as one Excel workbook (one sheet each, in the agency template layout: purple title and section bands, lavender header, Pass/Fail and Status dropdowns, frozen headers) or as CSV. The competitor sheet compares the business with the top 3 from the same search. Opened from a single profile, it searches Google Maps for the primary category (or a keyword you type) from the business's own address, so you no longer need to start from a results list; the Competitors section shows the business's position there too. Or compare with up to 3 competitors you add yourself: paste a Google Maps link (address bar or Share link), a cid= link or a CID. Your list is saved per business. Optional website checks fill LocalBusiness markup, lead form, phone, offer and social proof.
+- **Free website speed test, no API key**: measures the real page in a small window (Largest Contentful Paint, layout shift, server response, load time, page weight) with Google's Core Web Vitals thresholds. Google's PageSpeed lab test stays as a second option. New permission `scripting`, used only for this, on the one site you allow.
+- **GBP audit with 16 checks** built from the agency checklist: claimed and verified, UTM tracking on the website link, holiday hours Google has not confirmed, Google's photo total, how recent the latest post is, plus the earlier checks. The score now counts only what can be verified, so nothing Google hides costs points.
+- Search panel extras: social profiles and "Reviews from the web" are read when the business is opened on Google Search.
+
+Fixed (wrong numbers)
+- **Hours missing for about half of all businesses**: the place request lacked the feature groups Google Maps sends, so Google left out the weekly hours. Verified on 30 live places: hours now read for 30 of 30 (was 15). The same change brings Google's photo total and the latest posts.
+- **"No owner description" for everyone**: Google no longer shows owner descriptions publicly. The audit now says so and leaves it out of the score instead of failing every profile.
+- **Photo counts that did not match the downloads**: the audit, now **Media Audit**, shows Google's own total ("On Google") separately from the photos and videos actually found, which are exactly what the download buttons save; any gap is explained.
+
+Changed
+- "Photo Audit" is now "Media Audit" (it covers photos and videos).
+- Media and Post audit results are saved per business and reused in the audit sheets.
+
 ## 1.5.0, 2026-11-24
 
 An in-depth review (live tests plus an independent code review) and three features inspired by GBP Compass, built from scratch.

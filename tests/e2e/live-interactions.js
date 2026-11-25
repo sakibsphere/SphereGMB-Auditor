@@ -64,10 +64,10 @@ const SEARCH_URL = 'https://www.google.com/maps/search/mexican+restaurant/@40.74
     results.profileTab = await report.$eval('#info', (el) => el.innerText.slice(0, 600));
     await report.close();
 
-    // Photo audit on Maps opens a Google Search tab and runs there (since 1.3.0)
+    // Media audit on Maps opens a Google Search tab and runs there (since 1.3.0)
     const [photoTab] = await Promise.all([
       context.waitForEvent('page', { timeout: 15000 }),
-      page.click('.sgmb-maps-place [data-action="photo-audit"]'),
+      page.click('.sgmb-maps-place [data-action="media-audit"]'),
     ]);
     await photoTab.waitForLoadState('domcontentloaded').catch(() => {});
     results.photoAudit = { url: photoTab.url().slice(0, 120), captcha: /\/sorry\//.test(photoTab.url()) };

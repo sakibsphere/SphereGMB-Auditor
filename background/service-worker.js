@@ -6,9 +6,9 @@
 /* global SphereGmbPlaceParser, SphereGmbPageSpeed */
 importScripts('../lib/place-parser.js', '../lib/pagespeed.js');
 
-const CACHE_PREFIX = 'sgmb_v3_place_';
-// v2 entries lack Business Profile ID, claimed status and booking links, so they are dropped.
-const LEGACY_CACHE_PREFIXES = ['sgmb_cache_', 'ppc_', 'sgmb_v2_place_'];
+const CACHE_PREFIX = 'sgmb_v4_place_';
+// Older entries were fetched without Maps' feature groups (missing hours, photos, posts).
+const LEGACY_CACHE_PREFIXES = ['sgmb_cache_', 'ppc_', 'sgmb_v2_place_', 'sgmb_v3_place_'];
 const MAX_SAVED_REPORTS = 15;
 const MAX_CACHED_PLACES = 800;
 const PRUNE_EVERY_WRITES = 40;
@@ -42,6 +42,7 @@ chrome.runtime.onInstalled.addListener(async (details) => {
 const HANDLERS = {
   getPlaceProfile: (m) => getPlaceProfile(m.payload?.featureId),
   getPreviewPlaceCategories: (m) => getPlaceProfile(m.payload?.featureId), // v1 name, kept for compatibility
+  localSearch: (m) => localSearch(m.payload || {}),
   getCacheStats: () => getCacheStatistics(),
   clearCategoryCache: () => clearAllPlaceCache().then(() => ({ success: true })),
   clearAllData: () => clearAllData().then(() => ({ success: true })),
@@ -72,6 +73,32 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     });
   return true;
 });
+
+/**
+ * Top Google Maps results for a keyword, searched from a point (the business's own address),
+ * so a single profile can be compared with the businesses that outrank it there. Kept in
+ * session storage (memory, cleared when the browser closes) so reopening a report is instant.
+ */
+async function localSearch({ query, lat, lng }) {
+  const q = String(query || '').trim().slice(0, 120);
+  const la = Number(lat);
+  const ln = Number(lng);
+  if (!q || !Number.isFinite(la) || !Number.isFinite(ln) || Math.abs(la) > 90 || Math.abs(ln) > 180) {
+    return { results: [], error: 'invalid_search' };
+  }
+  const key = `sgmb_ls_${q.toLowerCase()}|${la.toFixed(4)},${ln.toFixed(4)}`;
+  try {
+    const hit = (await chrome.storage.session.get(key))[key];
+    if (hit && Date.now() - hit.ts < 6 * 60 * 60 * 1000) return { results: hit.results, query: q, cached: true };
+  } catch (e) { /* no session storage: just search */ }
+  const response = await fetchWithRetry(SphereGmbPlaceParser.mapsSearchUrl(q, la, ln));
+  if (!response.ok) return { results: [], error: `http_${response.status}` };
+  const results = SphereGmbPlaceParser.parseMapsSearch(await response.text()).slice(0, 20);
+  if (results.length) {
+    try { await chrome.storage.session.set({ [key]: { results, ts: Date.now() } }); } catch (e) { /* fine */ }
+  }
+  return { results, query: q };
+}
 
 async function getCacheTtlMs() {
   try {
@@ -105,7 +132,7 @@ async function getPlaceProfile(featureId) {
     }
 
     // Feature IDs are global, so always resolve against google.com (the only host permission).
-    const url = `https://www.google.com/maps/preview/place?authuser=0&hl=en&gl=us&pb=!1m2!1s${encodeURIComponent(featureId)}!2s`;
+    const url = SphereGmbPlaceParser.placeRequestUrl(featureId);
     const response = await fetchWithRetry(url);
     if (!response.ok) return { categories: [], error: `http_${response.status}` };
 
@@ -349,7 +376,7 @@ async function runPageSpeed(url) {
 }
 
 /**
- * Saves Google-hosted photos/videos into Downloads/SphereGMB/<business>/ (photo audit).
+ * Saves Google-hosted photos/videos into Downloads/SphereGMB/<business>/ (media audit).
  * Only googleusercontent / ggpht URLs are accepted.
  */
 async function downloadMedia(files) {
