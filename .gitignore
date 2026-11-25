@@ -43,3 +43,5 @@ pnpm-debug.log*
 # Local test output (screenshots can show your IP address, location or account)
 test-results/
 playwright-report/
+
+website/video-src/build/

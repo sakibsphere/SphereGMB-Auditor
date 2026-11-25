@@ -15,7 +15,8 @@
 
   const svg = (body, size = 16) => `<svg class="ico" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${body}</svg>`;
   const ICONS = {
-    sphere: '<svg class="ico" width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3.5" fill="currentColor"/></svg>',
+    // SphereGMB mark: a score ring around a map pin (source: assets/icons/icon.svg).
+    sphere: '<svg class="ico" width="26" height="26" viewBox="0 0 64 64" aria-hidden="true"><path d="M50.4 17.2A24 24 0 1 1 41.9 10.1" fill="none" stroke="#6C2296" stroke-width="7" stroke-linecap="round"/><circle cx="48.6" cy="12.4" r="4.2" fill="#9838CE"/><path d="M32 47.5c-.9 0-11-9.4-11-17.6a11 11 0 0 1 22 0c0 8.2-10.1 17.6-11 17.6z" fill="#250A33"/><circle cx="32" cy="29.6" r="4.3" fill="#fff"/></svg>',
     copy: svg('<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>', 14),
     check: svg('<polyline points="20 6 9 17 4 12"/>', 14),
     alert: svg('<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>', 14),
