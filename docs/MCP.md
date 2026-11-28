@@ -45,6 +45,20 @@ npx -y @anthropic-ai/claude-code mcp add gbp-sphere --scope user -- npx -y -p gi
 
 Or install the CLI once with `npm install -g @anthropic-ai/claude-code`, open a new terminal and use the first command.
 
+**Windows PowerShell says "npx.ps1 cannot be loaded because running scripts is disabled"?** Windows blocks PowerShell scripts by default, and `npx` and `npm` start as scripts there. Type `npx.cmd` (or `npm.cmd`) instead, which needs no setting changes:
+
+```powershell
+npx.cmd -y @anthropic-ai/claude-code mcp add gbp-sphere --scope user -- npx -y -p github:sakibsphere/GBP-Sphere gbp-sphere-mcp
+```
+
+To make plain `npx` and `npm` work in PowerShell from now on, allow local scripts for your own Windows account (a common developer setting; it still asks for a signature on scripts downloaded from the internet):
+
+```powershell
+Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+```
+
+Command Prompt (cmd) is not affected. Neither are the AI apps: they start `npx` directly, not through PowerShell.
+
 Check that it connects (swap in `npx -y @anthropic-ai/claude-code` for `claude` if needed):
 
 ```sh
@@ -106,6 +120,7 @@ Ask your assistant something like "Audit Peter Luger Steak House in Brooklyn and
 ## If it does not work
 
 - **`claude` is not recognized:** use the `npx -y @anthropic-ai/claude-code ...` command above, or install the CLI.
+- **"npx.ps1 cannot be loaded" in PowerShell:** type `npx.cmd` instead of `npx`, or run `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` once (see Claude Code above).
 - **`npx` or `node` is not recognized:** Node.js is missing, or the app was opened before Node.js was installed. Install it, then restart the app or terminal.
 - **The tools do not show up:** restart the app fully and start a new session. In a JSON config, check for a missing comma or bracket.
 - **Claude Desktop on Windows does not start the server:** use `"command": "cmd"` and put `"/c", "npx"` in front of the other arguments.

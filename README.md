@@ -75,7 +75,7 @@ GBP Sphere also runs as a local [MCP](https://modelcontextprotocol.io) server, s
 claude mcp add gbp-sphere --scope user -- npx -y -p github:sakibsphere/GBP-Sphere gbp-sphere-mcp
 ```
 
-No `claude` command in your terminal (common if you use the Claude desktop app)? Put `npx -y @anthropic-ai/claude-code` in place of `claude`, nothing to install. Then start a new Claude session.
+No `claude` command in your terminal (common if you use the Claude desktop app)? Put `npx -y @anthropic-ai/claude-code` in place of `claude`, nothing to install. In Windows PowerShell, if it says running scripts is disabled, type `npx.cmd` instead of `npx`. Then start a new Claude session.
 
 Tools: search Google Maps, full profile, 16-check audit with fix list and competitor benchmark, local competitors, Google Maps rank check from the business address, category research, the Excel agency audit, research links and the CID decoder. Setup for Claude Desktop, ChatGPT (Codex), Cursor, VS Code and others, plus a local HTTP API: **[docs/MCP.md](docs/MCP.md)**.
 
