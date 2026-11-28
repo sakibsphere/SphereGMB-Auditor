@@ -82,7 +82,13 @@ The Chat tab has its own config, separate from Claude Code. Settings > Developer
 }
 ```
 
-The file is at `%APPDATA%\Claude\claude_desktop_config.json` on Windows and `~/Library/Application Support/Claude/claude_desktop_config.json` on macOS. If it already lists other servers, add `"gbp-sphere"` inside the existing `"mcpServers"`.
+The safest way to find the right file is **Settings > Developer > Edit Config** inside Claude, which opens the one your install reads. Where it usually is:
+
+- **macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Windows, installer from claude.ai:** `%APPDATA%\Claude\claude_desktop_config.json`
+- **Windows, Microsoft Store version:** `%LOCALAPPDATA%\Claude-Data\anthropicpbc.claude_<id>\claude_desktop_config.json` (the folder name ends in an ID that differs per PC). A `claude_desktop_config.json` placed in `%APPDATA%\Claude` is ignored by this version.
+
+The right file usually already holds other settings, such as `"preferences"`. Keep them: add `"mcpServers"` next to them (or add `"gbp-sphere"` inside an existing `"mcpServers"`), not in a new file. On Windows, `"command": "cmd"` with `"/c", "npx"` in front of the other arguments is the most reliable form.
 
 ### ChatGPT (Codex CLI and the Codex IDE extension)
 
@@ -123,6 +129,7 @@ Ask your assistant something like "Audit Peter Luger Steak House in Brooklyn and
 - **"npx.ps1 cannot be loaded" in PowerShell:** type `npx.cmd` instead of `npx`, or run `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` once (see Claude Code above).
 - **`npx` or `node` is not recognized:** Node.js is missing, or the app was opened before Node.js was installed. Install it, then restart the app or terminal.
 - **The tools do not show up:** restart the app fully and start a new session. In a JSON config, check for a missing comma or bracket.
+- **Claude searches the web or asks to open Chrome instead of using GBP Sphere:** the server is not loaded in that chat. In Claude Desktop this usually means the config is in the wrong file (see the Microsoft Store path above), or Claude was not fully quit from the system tray after the change. Settings > Developer shows each server and any error.
 - **Claude Desktop on Windows does not start the server:** use `"command": "cmd"` and put `"/c", "npx"` in front of the other arguments.
 - **An old version keeps running after an update:** run `npm cache clean --force`, then restart the app.
 
