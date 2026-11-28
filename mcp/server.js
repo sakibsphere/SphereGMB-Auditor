@@ -90,7 +90,9 @@ async function handle(msg) {
 function startStdio() {
   let buffer = '';
   const send = (obj) => process.stdout.write(`${JSON.stringify(obj)}\n`);
-  const onLine = async (line) => {
+  const onLine = async (raw) => {
+    // Some shells put a byte-order mark in front of piped text.
+    const line = raw.replace(/^\uFEFF/, '');
     if (!line.trim()) return;
     let msg;
     try {
