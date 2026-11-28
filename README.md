@@ -72,8 +72,10 @@ More detail: [user guide](docs/INSTALL_AND_USER_GUIDE.md).
 GBP Sphere also runs as a local [MCP](https://modelcontextprotocol.io) server, so an assistant can look up, audit and compare profiles on its own: "audit Peter Luger Steak House in Brooklyn, compare it with the local competitors and build the Excel audit". It runs on your computer with Node.js 18+, needs no API key, and reuses the extension's own audit code.
 
 ```sh
-claude mcp add gbp-sphere -- npx -y -p github:sakibsphere/GBP-Sphere gbp-sphere-mcp
+claude mcp add gbp-sphere --scope user -- npx -y -p github:sakibsphere/GBP-Sphere gbp-sphere-mcp
 ```
+
+No `claude` command in your terminal (common if you use the Claude desktop app)? Put `npx -y @anthropic-ai/claude-code` in place of `claude`, nothing to install. Then start a new Claude session.
 
 Tools: search Google Maps, full profile, 16-check audit with fix list and competitor benchmark, local competitors, Google Maps rank check from the business address, category research, the Excel agency audit, research links and the CID decoder. Setup for Claude Desktop, ChatGPT (Codex), Cursor, VS Code and others, plus a local HTTP API: **[docs/MCP.md](docs/MCP.md)**.
 

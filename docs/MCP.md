@@ -27,17 +27,35 @@ Every tool takes the business as a Google Maps link (address bar or a `maps.app.
 
 The commands below fetch the server straight from GitHub with `npx`, so there is nothing to download first. If you cloned the repository, you can use `node /path/to/GBP-Sphere/mcp/server.js` instead of the `npx` part.
 
-### Claude Code
+First check that Node.js 18 or newer is installed: `node --version` should print `v18` or higher. If it does not, install the LTS version from [nodejs.org](https://nodejs.org) and open a new terminal.
+
+### Claude Code (terminal, and the Code tab of the Claude desktop app)
 
 ```sh
-claude mcp add gbp-sphere -- npx -y -p github:sakibsphere/GBP-Sphere gbp-sphere-mcp
+claude mcp add gbp-sphere --scope user -- npx -y -p github:sakibsphere/GBP-Sphere gbp-sphere-mcp
 ```
 
-Add `--scope user` to have it in every project.
+`--scope user` makes it available in every project; leave it out to add it to the current project only.
 
-### Claude Desktop
+**"claude is not recognized" or "command not found"?** The `claude` command comes from the Claude Code CLI, and the Claude desktop app does not add it to your terminal. Run the same command through `npx` instead, nothing to install:
 
-Settings > Developer > Edit Config, then add this to `claude_desktop_config.json` and restart Claude:
+```sh
+npx -y @anthropic-ai/claude-code mcp add gbp-sphere --scope user -- npx -y -p github:sakibsphere/GBP-Sphere gbp-sphere-mcp
+```
+
+Or install the CLI once with `npm install -g @anthropic-ai/claude-code`, open a new terminal and use the first command.
+
+Check that it connects (swap in `npx -y @anthropic-ai/claude-code` for `claude` if needed):
+
+```sh
+claude mcp list
+```
+
+It should say `gbp-sphere: ... Connected`. Then start a **new** Claude Code session: sessions that were already open do not load new servers.
+
+### Claude Desktop (Chat)
+
+The Chat tab has its own config, separate from Claude Code. Settings > Developer > Edit Config, then add this to `claude_desktop_config.json` and quit Claude completely (also from the system tray) before opening it again:
 
 ```json
 {
@@ -49,6 +67,8 @@ Settings > Developer > Edit Config, then add this to `claude_desktop_config.json
   }
 }
 ```
+
+The file is at `%APPDATA%\Claude\claude_desktop_config.json` on Windows and `~/Library/Application Support/Claude/claude_desktop_config.json` on macOS. If it already lists other servers, add `"gbp-sphere"` inside the existing `"mcpServers"`.
 
 ### ChatGPT (Codex CLI and the Codex IDE extension)
 
@@ -78,6 +98,18 @@ npx -y -p github:sakibsphere/GBP-Sphere gbp-sphere-mcp --http 8765
 - `/openapi.json` describes the API for tools that import OpenAPI.
 
 It listens on 127.0.0.1 only and refuses requests that come from web pages, so a site you visit cannot use it.
+
+## Try it
+
+Ask your assistant something like "Audit Peter Luger Steak House in Brooklyn and compare it with the competitors" and allow the GBP Sphere tools when it asks. The first start downloads the server from GitHub, which takes 10 to 15 seconds; later starts are quick.
+
+## If it does not work
+
+- **`claude` is not recognized:** use the `npx -y @anthropic-ai/claude-code ...` command above, or install the CLI.
+- **`npx` or `node` is not recognized:** Node.js is missing, or the app was opened before Node.js was installed. Install it, then restart the app or terminal.
+- **The tools do not show up:** restart the app fully and start a new session. In a JSON config, check for a missing comma or bracket.
+- **Claude Desktop on Windows does not start the server:** use `"command": "cmd"` and put `"/c", "npx"` in front of the other arguments.
+- **An old version keeps running after an update:** run `npm cache clean --force`, then restart the app.
 
 ## Good to know
 
