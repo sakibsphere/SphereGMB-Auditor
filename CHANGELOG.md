@@ -1,6 +1,8 @@
 # Changelog
 
-## Unreleased
+## 1.6.1, 2026-11-28
+
+No new permissions.
 
 - **Use GBP Sphere from AI assistants (MCP).** A local MCP server (`mcp/server.js`, no dependencies, no API key) lets Claude, ChatGPT (Codex), Cursor, VS Code and other MCP clients search Google Maps, read full profiles, run the 16-check audit with fix list and competitor benchmark, find local competitors, check Google Maps rankings from the business address, research categories and save the Excel agency audit. `--http` adds a local JSON API and MCP over HTTP on 127.0.0.1. Setup: [docs/MCP.md](docs/MCP.md).
 - **New name: GBP Sphere** (was SphereGMB). "GMB" stood for Google My Business, which Google renamed to Google Business Profile. The repository is now github.com/sakibsphere/GBP-Sphere (the old address redirects). The download file name (`sphere-gmb.zip`) stays the same, so old links keep working.

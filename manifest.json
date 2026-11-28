@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "GBP Sphere: Free Google Business Profile Audit Tool",
   "short_name": "GBP Sphere",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "description": "Free, open-source Google Business Profile audit tool for Search and Maps: categories, a 16-check score, competitors, Excel.",
   "icons": {
     "16": "assets/icons/icon16.png",

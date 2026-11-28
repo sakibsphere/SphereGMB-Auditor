@@ -10,6 +10,19 @@ npm run test:full:mobile   # same at 390 px
 
 Live runs write screenshots, downloaded CSVs and `full-feature-report*.json` to `test-results/screenshots/`.
 
+## v1.6.1 release checks (2026-11-28)
+
+| Check | Result |
+| --- | --- |
+| `npm run verify` (lint, syntax/manifest, unit, DOM, review dialog, rank runner, website check, MCP server) | PASS |
+| `npm run package` | PASS, 46 files |
+| `npm run test:smoke`, Google Maps place (desktop) | PASS: one widget, 4 categories, all 6 toolbar buttons, no page errors |
+| `npm run test:smoke:mobile`, Google Maps place | PASS |
+| `node tests/e2e/live-interactions.js` | PASS: Media Audit opens its tab, 7 result cards with widgets, no orphan widgets, no page errors |
+| `node tests/e2e/live-trusted-wheel.js` | PASS: review list scrolled and loaded 10 more reviews |
+| MCP server, all 9 tools live over stdio and HTTP | PASS |
+| Google Search (knowledge panel) | Not verified: Google showed its CAPTCHA to the automated browser; not bypassed. Check manually. |
+
 ## 1. Automated gates
 
 | Gate | Result |
