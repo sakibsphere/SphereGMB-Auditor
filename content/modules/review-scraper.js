@@ -749,7 +749,10 @@ window.SphereGmb = window.SphereGmb || {};
       const collect = () => {
         for (const item of this.findReviewItems(modal)) {
           const rev = this.parseReviewItem(item);
-          const key = rev.reviewId || item.getAttribute('data-review-id') || `${rev.authorName}|${rev.dateText}|${rev.rating}|${rev.reviewText.slice(0, 40)}`;
+          // Without a review ID, the reviewer's profile link keeps two anonymous "Google User"
+          // reviews with the same date, rating and empty text from merging into one row.
+          const key = rev.reviewId || item.getAttribute('data-review-id')
+            || `${rev.authorUrl || rev.authorName}|${rev.dateText}|${rev.rating}|${(rev.reviewText || '').slice(0, 40)}`;
           if (!collected.has(key)) collected.set(key, rev);
         }
       };

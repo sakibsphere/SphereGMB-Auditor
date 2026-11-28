@@ -59,13 +59,13 @@ Automated Chromium gets a CAPTCHA on Google Search, so the extension could not r
 
 | Check | Page | Result |
 |---|---|---|
-| Business knowledge panel detected | "Wilkerson Insurance Agency Farmers Branch TX" | PASS |
+| Business knowledge panel detected | "Empire State Building New York" | PASS |
 | Name, feature ID, primary category ("Health insurance agency"), mount point | same | PASS |
 | Reviews link (`a[data-fid][role=button]`, "59 Google reviews") | same | PASS |
 | Review dialog: scroll container `.RVCQse`, card `div.bwb7ce`, parser fields | same | PASS (real markup, 8 jsdom tests) |
 | Next review page loads only on trusted wheel | same | Confirmed: programmatic scroll 10→10, real wheel 10→20→30→40 |
 | Extension's `chrome.debugger` wheel scrolls and lazy-loads | Maps results feed | PASS, 0→2812 px, 10→20 results |
-| Local pack rows detected, one widget per row | "insurance agency Farmers Branch TX" | PASS, 3 rows |
+| Local pack rows detected, one widget per row | "insurance agency Dallas TX" | PASS, 3 rows |
 | Local pack feature ID + category per row | same | PASS after fix (see §4), 3/3 |
 
 ## 4. Bugs found by this test pass (all fixed)

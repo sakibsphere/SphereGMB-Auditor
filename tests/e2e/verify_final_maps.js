@@ -8,7 +8,7 @@ const { launchExtension } = require('./launch');
 
   try {
     const testPage = page || await context.newPage();
-    const targetUrl = 'https://www.google.com/maps/place/Wilkerson+Insurance+Agency/@32.9112209,-96.8858413,15z/data=!4m6!3m5!1s0x864c2945b1bd1b1b:0x4374e835d53256a2!8m2!3d32.9112209!4d-96.8858413!16s%2Fg%2F11cnn2xkv1?hl=en';
+    const targetUrl = 'https://www.google.com/maps/place/Empire+State+Building/@40.7484405,-73.9856644,17z/data=!4m6!3m5!1s0x89c259a9b3117469:0xd134e199a405a163!8m2!3d40.7484405!4d-73.9856644?hl=en';
     await testPage.goto(targetUrl, { waitUntil: 'domcontentloaded', timeout: 35000 });
 
     try {

@@ -13,7 +13,7 @@ GBP Sphere is 100% self-contained and does not require complex build steps, node
 ### Step-by-Step Instructions:
 
 1. **Get the folder:**  
-   Easiest: run the one-line installer from the README ("Install", option 1), which puts it in a `GBP Sphere` folder in your home folder. Or download [sphere-gmb.zip](https://github.com/sakibsphere/GBP-Sphere/releases/latest/download/sphere-gmb.zip) and unzip it anywhere, for example your Documents folder.  
+   Easiest: run the one-line installer from the README ("Install", option 1), which puts it in a `GBP-Sphere-Extension` folder in your Downloads folder. Or download [sphere-gmb.zip](https://github.com/sakibsphere/GBP-Sphere/releases/latest/download/sphere-gmb.zip) and unzip it anywhere, for example your Documents folder.  
    *(Make sure the folder contains `manifest.json`, `background/`, `content/`, and `popup/`)*.
 
 2. **Open Extensions in Google Chrome:**  
@@ -38,7 +38,7 @@ GBP Sphere is 100% self-contained and does not require complex build steps, node
 ## 2. Using GBP Sphere on Google Search (SERP)
 
 ### A. Instant In-Page Toolbar
-When searching for any business (e.g., *Wilkerson Insurance Agency*, *Peter Luger Steak House*), GBP Sphere renders directly beneath the primary rating bar:
+When searching for any business (e.g., *Empire State Building*, *Peter Luger Steak House*), GBP Sphere renders directly beneath the primary rating bar:
 - **Categories Line:** `Categories:` followed by `[Primary Category]` in purple/amethyst with a small bolt icon, followed by all secondary categories chips.
 - **Button Row 1:**
   - `[ Export ]`: 1-click business profile CSV download.

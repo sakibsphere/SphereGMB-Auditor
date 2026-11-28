@@ -195,6 +195,7 @@
         $('status').append(resume);
         running = false;
         toggleRunning(false);
+        removeJob(jobId).catch(() => {}); // Resume starts a fresh job; don't leave this one behind.
         return;
       }
       // "empty" means the results never rendered: unknown, not "not found", and not saved.
@@ -217,6 +218,8 @@
     // Remember positions (per business and mode) so the next run can show the change.
     const snapshot = { ...previous };
     for (const r of done) snapshot[r.keyword.toLowerCase()] = r.localRank;
+    // Re-insert so this business moves to the newest slot, then drop the oldest beyond 50.
+    delete rankHistory[historyKey];
     rankHistory[historyKey] = snapshot;
     const keys = Object.keys(rankHistory);
     if (keys.length > 50) delete rankHistory[keys[0]];

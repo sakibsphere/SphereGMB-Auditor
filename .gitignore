@@ -31,7 +31,6 @@ desktop.ini
 User Data/
 *Default/
 Profile */
-ppjhoknoadhakhhdbbjjinlopefmehik/
 
 # Logs and debug files
 npm-debug.log*
@@ -44,4 +43,3 @@ pnpm-debug.log*
 test-results/
 playwright-report/
 
-website/video-src/build/

@@ -15,6 +15,8 @@ const files = new Set([
   ...fs.readdirSync(path.join(ROOT, 'lib')).filter((f) => f.endsWith('.js')).map((f) => `lib/${f}`),
   ...fs.readdirSync(path.join(ROOT, 'pages')).filter((f) => f.endsWith('.js')).map((f) => `pages/${f}`),
   'popup/popup.js',
+  'mcp/core.js',
+  'mcp/server.js',
   ...manifest.content_scripts.flatMap((c) => c.js)
 ]);
 

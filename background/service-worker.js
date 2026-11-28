@@ -186,10 +186,14 @@ async function clearAllPlaceCache() {
   if (keys.length) await chrome.storage.local.remove(keys);
 }
 
-/** "Clear saved data" in the popup: places, reports, rank history, category list. Settings stay. */
+/**
+ * "Clear saved data" in the popup: places, reports, saved Media/Post audit results, custom
+ * competitor lists, rank history and the category list. Settings stay.
+ */
 async function clearAllData() {
   await clearAllPlaceCache();
-  await chrome.storage.local.remove(['savedReports', 'rankHistory', 'categoryLibrary', 'lastBusiness', 'rankJobs', 'rankDraft', 'activeAudit']);
+  const perBusiness = (await storageKeys()).filter((k) => k.startsWith('sgmb_audit_') || k.startsWith('sgmb_comp_'));
+  await chrome.storage.local.remove(['savedReports', 'rankHistory', 'categoryLibrary', 'lastBusiness', 'rankJobs', 'rankDraft', 'activeAudit', ...perBusiness]);
 }
 
 /**

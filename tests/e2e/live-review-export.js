@@ -11,7 +11,7 @@ const fs = require('fs');
 const { launchExtension, PROJECT_ROOT } = require('./launch');
 
 const OUT_DIR = path.join(PROJECT_ROOT, 'test-results', 'screenshots');
-const QUERY = process.argv[2] || 'Wilkerson Insurance Agency 2727 Lyndon B Johnson Fwy Suite 1062 Farmers Branch TX';
+const QUERY = process.argv[2] || 'Empire State Building New York';
 
 function parseCsv(text) {
   const rows = [];

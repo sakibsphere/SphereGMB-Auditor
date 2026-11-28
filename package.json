@@ -9,7 +9,7 @@
   "scripts": {
     "lint": "eslint .",
     "check": "node scripts/check-syntax.js",
-    "test": "node test/test-suite.js && node test/test-dom-integration.js && node test/test-review-dialog.js && node test/test-rank-runner.js && node test/test-site-audit.js",
+    "test": "node test/test-suite.js && node test/test-dom-integration.js && node test/test-review-dialog.js && node test/test-rank-runner.js && node test/test-site-audit.js && node test/test-mcp.js",
     "verify": "npm run lint && npm run check && npm test",
     "test:smoke": "node tests/e2e/live-smoke.js",
     "test:smoke:mobile": "node tests/e2e/live-smoke.js --mobile",
@@ -17,6 +17,8 @@
     "test:trusted-wheel": "node tests/e2e/live-trusted-wheel.js",
     "test:reviews": "node tests/e2e/live-review-export.js",
     "package": "node scripts/package.js",
+    "mcp": "node mcp/server.js",
+    "mcp:http": "node mcp/server.js --http",
     "test:full": "node tests/e2e/full-feature-test.js",
     "test:full:mobile": "node tests/e2e/full-feature-test.js --mobile",
     "test:ui": "node tests/e2e/ui-audit.js"
@@ -27,7 +29,9 @@
     "google-business-profile",
     "gmb-audit",
     "seo-tool",
-    "open-source"
+    "open-source",
+    "mcp",
+    "mcp-server"
   ],
   "repository": {
     "type": "git",
@@ -40,6 +44,20 @@
   "author": "Sakib's Sphere",
   "license": "MIT",
   "type": "commonjs",
+  "bin": {
+    "gbp-sphere-mcp": "mcp/server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "files": [
+    "mcp/",
+    "lib/",
+    "content/modules/audit-engine.js",
+    "manifest.json",
+    "README.md",
+    "LICENSE"
+  ],
   "devDependencies": {
     "@playwright/test": "^1.65.1",
     "axe-core": "^4.10.3",

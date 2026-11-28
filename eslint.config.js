@@ -21,7 +21,7 @@ module.exports = [
     }
   },
   {
-    files: ['test/**/*.js', 'tests/**/*.js', 'scripts/**/*.js', 'website/video-src/**/*.js', 'eslint.config.js'],
+    files: ['test/**/*.js', 'tests/**/*.js', 'scripts/**/*.js', 'mcp/**/*.js', 'eslint.config.js'],
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: 'commonjs',
@@ -30,7 +30,7 @@ module.exports = [
   },
   {
     // Playwright page.evaluate() callbacks and the DOM test sandbox run browser code.
-    files: ['tests/e2e/**/*.js', 'test/test-dom-integration.js', 'website/video-src/**/*.js'],
+    files: ['tests/e2e/**/*.js', 'test/test-dom-integration.js'],
     languageOptions: { globals: { ...globals.node, ...globals.browser, ...globals.webextensions } }
   },
   {

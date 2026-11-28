@@ -17,6 +17,7 @@ Chrome extension (Manifest V3, plain JavaScript, no build step) that audits Goog
 - `background/service-worker.js`, profile lookups + cache, audit-tab routing, trusted wheel (`chrome.debugger`) for review export
 - `content/modules/`, `dom-maps.js`, `dom-serp.js` adapters; toolbar, audits, exporters, review scraper, `paa.js`, `rank-runner.js` (reads positions in rank-check search tabs)
 - `pages/`, extension pages: `report.html` (full profile report) and `rank.html` (bulk rank check), shared `pages.css` / `common.js`
+- `mcp/`, local MCP server and HTTP API for AI assistants (`core.js` reuses `lib/` and the audit engine; `server.js` is the stdio/HTTP transport). Must stay dependency-free; never write to stdout except protocol messages
 - `test/`, Node tests (vm sandbox, mock DOM, jsdom with real anonymised markup)
 - `tests/e2e/`, Playwright scripts against live Google Maps
 

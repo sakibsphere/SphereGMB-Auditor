@@ -388,14 +388,14 @@ async function newTabFrom(context, trigger) {
       await card.screenshot({ path: path.join(OUT, `full-audit-preview${SUFFIX}.png`) });
       comp.auditHead = compHead;
       // Custom competitor from a pasted Maps link replaces the search list.
-      await card.fill('#comp-link', 'https://www.google.com/maps/place/Wilkerson+Insurance+Agency/@32.91,-96.88,17z/data=!4m6!3m5!1s0x864c2945b1bd1b1b:0x4374e835d53256a2!8m2!3d32.9112209!4d-96.8858413');
+      await card.fill('#comp-link', 'https://www.google.com/maps/place/Empire+State+Building/@40.7484405,-73.9856644,17z/data=!4m6!3m5!1s0x89c259a9b3117469:0xd134e199a405a163!8m2!3d40.7484405!4d-73.9856644');
       await card.press('#comp-link', 'Enter');
       await card.waitForSelector('#comp-list .comp-item', { timeout: 20000 });
       const custom = await card.evaluate(() => ({
         item: document.querySelector('#comp-list .comp-item strong').textContent,
         note: document.querySelector('input[value="competitor"]').closest('.audit-opt').textContent
       }));
-      assert(/Wilkerson/.test(custom.item) && /\(your list\)/.test(custom.note), `custom: ${custom.item} / ${custom.note}`);
+      assert(/Empire State/.test(custom.item) && /\(your list\)/.test(custom.note), `custom: ${custom.item} / ${custom.note}`);
       await card.evaluate(() => { document.getElementById('audit-out').innerHTML = ''; });
       await card.click('[data-act="audit-run"]');
       await card.waitForSelector('#audit-out [data-act="audit-xlsx"]', { timeout: 90000 });
@@ -404,7 +404,7 @@ async function newTabFrom(context, trigger) {
         return d ? Array.from(d.querySelector('tr').cells).map((c) => c.textContent.trim()) : [];
       });
       // The template keeps three competitor columns; unused ones stay as blank slots.
-      assert(/^Competitor #1: Wilkerson/.test(customHead[2]) && customHead[3] === 'Competitor #2', `custom header: ${customHead.join(' | ')}`);
+      assert(/^Competitor #1: Empire State/.test(customHead[2]) && customHead[3] === 'Competitor #2', `custom header: ${customHead.join(' | ')}`);
       await card.click('[data-act="comp-remove"]');
       assert(await card.$$eval('#comp-list .comp-item', (e) => e.length) === 0, 'remove left the item');
       await card.close();

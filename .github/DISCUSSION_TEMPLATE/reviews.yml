@@ -1,7 +1,4 @@
-name: Review
-description: Rate GBP Sphere and tell other people how it worked for you
 title: "Review: "
-labels: ["review"]
 body:
   - type: markdown
     attributes:

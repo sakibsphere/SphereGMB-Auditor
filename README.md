@@ -23,6 +23,7 @@ GBP Sphere is a free, open-source Google Business Profile audit tool (the profil
 - **People also ask**, on Google Search results only: choose the depth (1 to 4 levels), country and language, and whether to also collect organic results, ads, related searches and autocomplete (optionally A to Z). Questions are grouped by type with level, answer and source; one CSV.
 - **Bulk rank check** (SERP Checker button, or the popup's Rank check tab), every category as a keyword plus your own, with the location added to each one. One Google search at a time in a background tab, with a pause between searches; shows the Local Finder position (top 20), optional website position, the top competitor and the change since the last run. Stops and tells you if Google shows its "verify you're human" page; it never tries to get around it.
 - **CID decoder** in the popup for any Maps URL, feature ID (`0x…:0x…`) or `ludocid` link.
+- **AI assistant tools (MCP)**, a local server that lets Claude, ChatGPT (Codex), Cursor and other assistants search, audit and compare profiles and build the Excel audit by themselves. See [below](#use-it-from-claude-chatgpt-or-any-ai-assistant-mcp).
 
 ## Install
 
@@ -42,7 +43,7 @@ irm https://raw.githubusercontent.com/sakibsphere/GBP-Sphere/main/install.ps1 | 
 curl -fsSL https://raw.githubusercontent.com/sakibsphere/GBP-Sphere/main/install.sh | sh
 ```
 
-It downloads the latest release into a `GBP Sphere` folder in your home folder and tells you the last step. Read the script first if you like: [install.ps1](install.ps1), [install.sh](install.sh).
+It downloads the latest release into `GBP-Sphere-Extension` in your Downloads folder and tells you the last step. Run it again to update (installs from before v1.6.1 in `SphereGMB` in your home folder keep updating there). Read the script first if you like: [install.ps1](install.ps1), [install.sh](install.sh).
 
 ### Option 2: download the zip
 
@@ -66,6 +67,16 @@ git clone https://github.com/sakibsphere/GBP-Sphere.git
 
 More detail: [user guide](docs/INSTALL_AND_USER_GUIDE.md).
 
+## Use it from Claude, ChatGPT or any AI assistant (MCP)
+
+GBP Sphere also runs as a local [MCP](https://modelcontextprotocol.io) server, so an assistant can look up, audit and compare profiles on its own: "audit Peter Luger Steak House in Brooklyn, compare it with the local competitors and build the Excel audit". It runs on your computer with Node.js 18+, needs no API key, and reuses the extension's own audit code.
+
+```sh
+claude mcp add gbp-sphere -- npx -y -p github:sakibsphere/GBP-Sphere gbp-sphere-mcp
+```
+
+Tools: search Google Maps, full profile, 16-check audit with fix list and competitor benchmark, local competitors, Google Maps rank check from the business address, category research, the Excel agency audit, research links and the CID decoder. Setup for Claude Desktop, ChatGPT (Codex), Cursor, VS Code and others, plus a local HTTP API: **[docs/MCP.md](docs/MCP.md)**.
+
 ## How it gets the data
 
 Visible values are read from the page. The full profile comes from the same place-preview request Google Maps itself makes (`/maps/preview/place`), sent from the extension's service worker, parsed by [`lib/place-parser.js`](lib/place-parser.js) and cached for 24 hours in your browser.
@@ -78,7 +89,7 @@ That endpoint is not an official, documented Google API: it can change without n
 |---|---|
 | `storage` | On/off switch, the profile cache (refreshed after 24 hours, capped at 800 places, oldest removed first), saved reports and rank history |
 | `scripting` | Free website speed check only: reads Chrome's own timing data (load time, LCP, layout shift, page weight) inside the business website, in a small window you see, after you click **Measure speed** and allow that one site |
-| `downloads` | Media audit: saves photos and videos into `Downloads/GBP Sphere/<business>/` when you click Download |
+| `downloads` | Media audit: saves photos and videos into `Downloads/GBP-Sphere/<business>/` when you click Download |
 | `https://www.google.com/*` | Profile lookups from the service worker, and Google's search suggestions for the keyword finder |
 | Optional: the business's own website | Website check only. Not granted at install: when you click **Check the website**, Chrome asks for that one site (`optional_host_permissions`), and you can remove it later in the extension's settings. The page is read as plain HTML; none of its scripts run. |
 | Optional: `maps.app.goo.gl` | Only when you add a competitor by its Maps Share link: Chrome asks once, and GBP Sphere follows that one link to the place it points to. Full Google Maps links and CIDs need no extra permission. |

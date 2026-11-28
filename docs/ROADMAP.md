@@ -14,7 +14,7 @@ The extension had working pieces (the category endpoint was fine), but a handful
 4. **Maps widget chaos.** Live check on the Empire State Building page showed **6 widgets** on one page: one appended to `<body>` (mounted before Maps rendered `role="main"`), several on "People also search for" cards, one stuck on "Loading categories…".
 5. **Automated tabs repeated themselves.** The `?sphereGmbAudit=review` flag stayed in the URL, so any later URL change (closing the dialog, sorting) re-ran the scraper and downloaded the CSV again.
 6. **Every Post/Photo Audit click opened a modal *and* a new Google tab.**
-7. **Test data shipped in production code**: a "Wilkerson Insurance Agency" fallback name (and a regex that stripped that business's owner replies), a hardcoded `57` review count, and a default score of `85` (`score || 85` also turned a real `0` into `85`).
+7. **Test data shipped in production code**: a hardcoded test-business fallback name (and a regex that stripped that business's owner replies), a hardcoded `57` review count, and a default score of `85` (`score || 85` also turned a real `0` into `85`).
 8. **After reloading the extension, every open Google tab threw "Extension context invalidated".** Orphaned content scripts kept calling `chrome.*` APIs. Common during development; now detected and the old script shuts itself down.
 
 ## 2. Issue register
@@ -30,7 +30,7 @@ Severity: **C** critical · **H** high · **M** medium. Status: Fixed / Open.
 | 5 | C | Maps | Stale data after navigating place → place | Fixed, widget rebuilds when feature ID/name changes |
 | 6 | C | Workflow | Automated review tab re-runs + re-downloads | Fixed, one-shot, flag removed from URL, payload expires after 2 min |
 | 7 | C | UX | Post/Photo Audit opened modal + new tab | Fixed, in-page; "Open in dedicated tab" is an explicit button |
-| 8 | C | Data | Hardcoded Wilkerson / 57 / 85 values | Fixed + regression test |
+| 8 | C | Data | Hardcoded test business / 57 / 85 values | Fixed + regression test |
 | 9 | H | Data | Export & Dashboard only had DOM-scraped NAP; no hours, description, attributes, Place ID | Fixed, full profile parsed from the place endpoint; CSV now 26 columns |
 | 10 | H | Photo audit | Counted "Add photos" buttons; quoted unverifiable stats ("520% more calls", "BrightLocal 2024 benchmark") | Fixed, honest on-page counts, Google's own guidelines |
 | 11 | H | Search | Widget injected into non-business panels (people, films) | Fixed, requires a local-business signal |
@@ -143,8 +143,8 @@ Still open from Phase 1–2: competitor category gap, locale-aware review dates,
 | Long reviews | Full text is already in a hidden copy (`.gbdaZe .d83Iyc`, e.g. 206 visible → 2,802 chars); no "More" click needed. Paragraphs are `<br>`s | Parsed with line breaks |
 | Review details | Sub-ratings and Q&A sit **inside** the full text (`.zMjRQd`); visit info in `.ME0dBc`; photos `img.SeRB9d` (+ captions); reviewer meta "Local Guide·67 reviews·8 photos" | Separate CSV columns |
 | Owner replies | Complete in `.KmCjbd` (no truncation), date in the second `.YE6B9b` | Parsed |
-| Photos & videos | "See photos" viewer; categories are `[aria-label^="Change collection to"]`; thumbnails `…=w200-h200` → `=s0` gives the original; videos are `…=m18` MP4. Grid loads with normal scrolling | Counts + downloads (Wilkerson: All 47, By owner 45, Videos 14, identical on two runs) |
-| Posts | `[data-attrid="kc:/local:posts"]` → "View all" opens the Updates view; **all** posts load with normal scrolling (Wilkerson: 180, first May 3 2023); "More" expands instantly | Full post audit |
+| Photos & videos | "See photos" viewer; categories are `[aria-label^="Change collection to"]`; thumbnails `…=w200-h200` → `=s0` gives the original; videos are `…=m18` MP4. Grid loads with normal scrolling | Counts + downloads (test profile: identical counts on two runs) |
+| Posts | `[data-attrid="kc:/local:posts"]` → "View all" opens the Updates view; **all** posts load with normal scrolling (test profile: 180 posts back to 2023); "More" expands instantly | Full post audit |
 | People also ask | `.related-question-pair[data-q]` + `[aria-expanded][role=button]`; opening a question adds ~2–3 more (4 → 6 → 9 → 12) | Collector |
 | Review pages | Next 10 reviews load only on a trusted wheel near the end of the list | Trusted wheel via `chrome.debugger` (v1.2.2) |
 

@@ -999,10 +999,13 @@
       win = await chrome.windows.create({ url: site, focused: false, type: 'popup', width: 480, height: 820 });
       const tabId = win.tabs[0].id;
       await new Promise((resolve) => {
-        const done = () => { chrome.tabs.onUpdated.removeListener(onUpd); clearTimeout(timer); resolve(); };
+        let settled = false;
+        const done = () => { if (settled) return; settled = true; chrome.tabs.onUpdated.removeListener(onUpd); clearTimeout(timer); resolve(); };
         const onUpd = (id, info) => { if (id === tabId && info.status === 'complete') setTimeout(done, 2500); };
         const timer = setTimeout(done, 30000);
         chrome.tabs.onUpdated.addListener(onUpd);
+        // A fast page can finish loading before the listener exists: check once directly too.
+        chrome.tabs.get(tabId).then((t) => { if (t && t.status === 'complete') setTimeout(done, 2500); }).catch(() => {});
       });
       const [{ result }] = await chrome.scripting.executeScript({ target: { tabId }, func: collectPageMetrics });
       renderSpeed(result);
@@ -1055,7 +1058,7 @@
       no_website: 'No website linked.'
     };
     if (!res || res.error) {
-      box.innerHTML = `<p class="note note-warn" role="alert">${esc(errors[res?.error] || 'The PageSpeed check failed. Try again later.')}</p>`;
+      box.innerHTML = `<p class="note note-warn" role="alert">${esc(errors[res?.error] || 'The PageSpeed check failed. Try again later.')}</p><button class="btn" type="button" data-act="psi" style="margin-top:10px">Try again</button>`;
       return;
     }
     const tone = res.score >= 90 ? 'good' : res.score >= 50 ? 'mid' : 'bad';

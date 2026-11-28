@@ -2,10 +2,12 @@
 
 ## Unreleased
 
-- **New name: GBP Sphere** (was SphereGMB). "GMB" stood for Google My Business, which Google renamed to Google Business Profile. The repository is now github.com/sakibsphere/GBP-Sphere (the old address redirects). The download file name (`sphere-gmb.zip`) and the install folder stay the same, so old links, existing installs and saved data carry on.
+- **Use GBP Sphere from AI assistants (MCP).** A local MCP server (`mcp/server.js`, no dependencies, no API key) lets Claude, ChatGPT (Codex), Cursor, VS Code and other MCP clients search Google Maps, read full profiles, run the 16-check audit with fix list and competitor benchmark, find local competitors, check Google Maps rankings from the business address, research categories and save the Excel agency audit. `--http` adds a local JSON API and MCP over HTTP on 127.0.0.1. Setup: [docs/MCP.md](docs/MCP.md).
+- **New name: GBP Sphere** (was SphereGMB). "GMB" stood for Google My Business, which Google renamed to Google Business Profile. The repository is now github.com/sakibsphere/GBP-Sphere (the old address redirects). The download file name (`sphere-gmb.zip`) stays the same, so old links keep working.
 - New logo: a score ring around a map pin, in the toolbar icon, popup, Dashboard and audit badge.
 - Media audit downloads now go to `Downloads/GBP-Sphere/`.
-- Website with a narrated promo video in `website/`.
+- The one-line installer puts new installs in `Downloads/GBP-Sphere-Extension` on Windows, macOS and Linux (it finds a moved or translated Downloads folder). Existing installs in `SphereGMB` in your home folder keep updating in place, so saved data carries on. The Windows installer no longer changes settings in the shell you run it from, and it refuses to empty a folder that is not a GBP Sphere install.
+- Fixed: the CID decoder and report links picked the wrong place from a Maps link that came from a search; Clear saved data now also removes saved audit options and custom competitors; rank history keeps the latest check first; anonymous reviews with the same date and rating no longer merge in the CSV export; the speed test can be retried after an error.
 
 ## 1.6.0, 2026-11-25
 

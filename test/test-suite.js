@@ -77,7 +77,7 @@ test('Post analytics: dates, cadence, gaps, length, duplicates, policy issues', 
   const posts = [
     { dateText: '3 days ago', text: long, cta: 'Call now', images: 1 },
     { dateText: 'Nov 10, 2026', text: long + ' Bonus tip.', cta: 'Learn more', images: 1 },
-    { dateText: 'Sep 1, 2026', text: 'Call us at (214) 501-9613 TODAY FOR A FREE QUOTE NOW', cta: '', images: 0 },
+    { dateText: 'Sep 1, 2026', text: 'Call us at (555) 010-0199 TODAY FOR A FREE QUOTE NOW', cta: '', images: 0 },
     { dateText: 'May 3, 2023', text: 'Medicare enrollment opens soon. Health insurance help for seniors in Farmers Branch with plan comparisons and clear advice.', link: 'https://example.com', images: 1 }
   ];
   const r = analyzePosts(posts, { category: 'Health insurance agency', city: 'Farmers Branch' }, now);
@@ -514,7 +514,7 @@ test('reviews CSV: quotes and multi-line text survive', () => {
 test('regression: no test-fixture data hardcoded in shipped code', () => {
   for (const f of fs.readdirSync(path.join(ROOT, 'content/modules'))) {
     const src = fs.readFileSync(path.join(ROOT, 'content/modules', f), 'utf8');
-    assert(!/Wilkerson/i.test(src), `${f} still references the Wilkerson test business`);
+    assert(!/Insurance Agency/i.test(src), `${f} still references the old test business name`);
     assert(!/\|\|\s*57\b/.test(src), `${f} still falls back to the hardcoded 57 review count`);
     assert(!/\|\|\s*85\b/.test(src), `${f} still falls back to a hardcoded 85 score`);
   }

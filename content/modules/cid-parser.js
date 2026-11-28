@@ -14,9 +14,13 @@ window.SphereGmb = window.SphereGmb || {};
      */
     parseFeatureId(input) {
       if (!input || typeof input !== 'string') return null;
-      const regex = /0x[0-9a-fA-F]+:0x[0-9a-fA-F]+/g;
-      const matches = input.match(regex);
-      return matches && matches.length > 0 ? matches[0] : null;
+      const s = input.replace(/%3A/gi, ':');
+      // In a Maps data block the place itself is the last "!1s0x…:0x…" entry; an earlier one can
+      // belong to a search or another place (same rule as lib/report-links.js parseMapsLink).
+      const tagged = [...s.matchAll(/!1s(0x[0-9a-fA-F]+:0x[0-9a-fA-F]+)/g)];
+      if (tagged.length) return tagged[tagged.length - 1][1];
+      const m = s.match(/0x[0-9a-fA-F]+:0x[0-9a-fA-F]+/);
+      return m ? m[0] : null;
     },
 
     /**

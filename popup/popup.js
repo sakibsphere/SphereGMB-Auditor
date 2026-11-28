@@ -72,8 +72,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Feature ID first, so "cid=0x…" can't match a stray leading zero.
-    const featureMatch = inputVal.match(/0x[0-9a-fA-F]+:0x[0-9a-fA-F]+/);
-    const featureId = featureMatch ? featureMatch[0] : null;
+    // In a Maps data block the place is the last "!1s0x…:0x…" entry (see lib/report-links.js).
+    const plain = inputVal.replace(/%3A/gi, ':');
+    const tagged = [...plain.matchAll(/!1s(0x[0-9a-fA-F]+:0x[0-9a-fA-F]+)/g)];
+    const featureMatch = tagged.length ? null : plain.match(/0x[0-9a-fA-F]+:0x[0-9a-fA-F]+/);
+    const featureId = tagged.length ? tagged[tagged.length - 1][1] : featureMatch ? featureMatch[0] : null;
     let cid = null;
     if (featureId) {
       try {
