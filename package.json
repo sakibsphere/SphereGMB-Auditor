@@ -31,12 +31,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/sakibsphere/SphereGMB-Auditor.git"
+    "url": "https://github.com/sakibsphere/GBP-Sphere.git"
   },
   "bugs": {
-    "url": "https://github.com/sakibsphere/SphereGMB-Auditor/issues"
+    "url": "https://github.com/sakibsphere/GBP-Sphere/issues"
   },
-  "homepage": "https://github.com/sakibsphere/SphereGMB-Auditor#readme",
+  "homepage": "https://github.com/sakibsphere/GBP-Sphere#readme",
   "author": "Sakib's Sphere",
   "license": "MIT",
   "type": "commonjs",

@@ -1,14 +1,14 @@
 #!/usr/bin/env sh
 # GBP Sphere installer for macOS and Linux.
 #
-#   curl -fsSL https://raw.githubusercontent.com/sakibsphere/SphereGMB-Auditor/main/install.sh | sh
+#   curl -fsSL https://raw.githubusercontent.com/sakibsphere/GBP-Sphere/main/install.sh | sh
 #
 # Downloads the latest release zip from GitHub into ~/SphereGMB. Chrome does not let a script
 # install an extension, so you finish with "Load unpacked". Run it again to update: the folder
 # is reused, so you only press the reload arrow in chrome://extensions.
 set -eu
 
-REPO="sakibsphere/SphereGMB-Auditor"
+REPO="sakibsphere/GBP-Sphere"
 TARGET="${HOME}/SphereGMB"
 URL="https://github.com/${REPO}/releases/latest/download/sphere-gmb.zip"
 TMP="$(mktemp -d)"

@@ -13,7 +13,7 @@ GBP Sphere is 100% self-contained and does not require complex build steps, node
 ### Step-by-Step Instructions:
 
 1. **Get the folder:**  
-   Easiest: run the one-line installer from the README ("Install", option 1), which puts it in a `GBP Sphere` folder in your home folder. Or download [sphere-gmb.zip](https://github.com/sakibsphere/SphereGMB-Auditor/releases/latest/download/sphere-gmb.zip) and unzip it anywhere, for example your Documents folder.  
+   Easiest: run the one-line installer from the README ("Install", option 1), which puts it in a `GBP Sphere` folder in your home folder. Or download [sphere-gmb.zip](https://github.com/sakibsphere/GBP-Sphere/releases/latest/download/sphere-gmb.zip) and unzip it anywhere, for example your Documents folder.  
    *(Make sure the folder contains `manifest.json`, `background/`, `content/`, and `popup/`)*.
 
 2. **Open Extensions in Google Chrome:**  

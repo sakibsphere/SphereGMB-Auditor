@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- **New name: GBP Sphere** (was SphereGMB). "GMB" stood for Google My Business, which Google renamed to Google Business Profile. The repository, the download link and the install folder keep their old names, so existing installs and saved data carry on.
+- **New name: GBP Sphere** (was SphereGMB). "GMB" stood for Google My Business, which Google renamed to Google Business Profile. The repository is now github.com/sakibsphere/GBP-Sphere (the old address redirects). The download file name (`sphere-gmb.zip`) and the install folder stay the same, so old links, existing installs and saved data carry on.
 - New logo: a score ring around a map pin, in the toolbar icon, popup, Dashboard and audit badge.
 - Media audit downloads now go to `Downloads/GBP-Sphere/`.
 - Website with a narrated promo video in `website/`.

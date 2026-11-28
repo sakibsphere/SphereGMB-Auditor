@@ -5,8 +5,8 @@ Thanks for helping. Most contributions are one of three things: a Google page ch
 ## Setup
 
 ```bash
-git clone https://github.com/sakibsphere/SphereGMB-Auditor.git
-cd SphereGMB-Auditor
+git clone https://github.com/sakibsphere/GBP-Sphere.git
+cd GBP-Sphere
 npm install
 ```
 

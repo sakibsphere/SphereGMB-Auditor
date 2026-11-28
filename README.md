@@ -33,26 +33,26 @@ Works in Chrome, Edge, Brave and other Chromium browsers on a computer. GBP Sphe
 **Windows** (PowerShell):
 
 ```powershell
-irm https://raw.githubusercontent.com/sakibsphere/SphereGMB-Auditor/main/install.ps1 | iex
+irm https://raw.githubusercontent.com/sakibsphere/GBP-Sphere/main/install.ps1 | iex
 ```
 
 **macOS / Linux** (Terminal):
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/sakibsphere/SphereGMB-Auditor/main/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/sakibsphere/GBP-Sphere/main/install.sh | sh
 ```
 
 It downloads the latest release into a `GBP Sphere` folder in your home folder and tells you the last step. Read the script first if you like: [install.ps1](install.ps1), [install.sh](install.sh).
 
 ### Option 2: download the zip
 
-1. Download [sphere-gmb.zip](https://github.com/sakibsphere/SphereGMB-Auditor/releases/latest/download/sphere-gmb.zip) (always the latest release) and unzip it.
+1. Download [sphere-gmb.zip](https://github.com/sakibsphere/GBP-Sphere/releases/latest/download/sphere-gmb.zip) (always the latest release) and unzip it.
 2. Continue with "Load it in the browser" below.
 
 ### Option 3: clone with git (for developers)
 
 ```sh
-git clone https://github.com/sakibsphere/SphereGMB-Auditor.git
+git clone https://github.com/sakibsphere/GBP-Sphere.git
 ```
 
 ### Load it in the browser (once)

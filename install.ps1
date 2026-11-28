@@ -1,6 +1,6 @@
 # GBP Sphere installer for Windows (PowerShell).
 #
-#   irm https://raw.githubusercontent.com/sakibsphere/SphereGMB-Auditor/main/install.ps1 | iex
+#   irm https://raw.githubusercontent.com/sakibsphere/GBP-Sphere/main/install.ps1 | iex
 #
 # Downloads the latest release zip from GitHub into %USERPROFILE%\SphereGMB and opens that
 # folder. Chrome does not let a script install an extension, so you finish with three clicks
@@ -8,7 +8,7 @@
 # extension keeps its settings and you only press the reload arrow in chrome://extensions.
 
 $ErrorActionPreference = 'Stop'
-$repo = 'sakibsphere/SphereGMB-Auditor'
+$repo = 'sakibsphere/GBP-Sphere'
 $target = if ($env:SPHEREGMB_DIR) { $env:SPHEREGMB_DIR } else { Join-Path $env:USERPROFILE 'SphereGMB' }
 $zipUrl = "https://github.com/$repo/releases/latest/download/sphere-gmb.zip"
 $tmp = Join-Path ([IO.Path]::GetTempPath()) ("sphere-gmb-" + [guid]::NewGuid().ToString('N'))
