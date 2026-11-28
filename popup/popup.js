@@ -1,5 +1,5 @@
 /**
- * SphereGMB: Popup Logic
+ * GBP Sphere: Popup Logic
  * Tabs (WAI-ARIA pattern), on/off switch, recent reports, bulk rank check, CID decoder,
  * saved-data management, PageSpeed key.
  */

@@ -1,5 +1,5 @@
 /**
- * SphereGMB: Google Maps Adapter Module
+ * GBP Sphere: Google Maps Adapter Module
  * Mounts the widget into the open place panel and into search-result feed cards.
  */
 

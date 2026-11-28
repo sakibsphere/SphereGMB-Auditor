@@ -33,8 +33,8 @@ body:
   - type: textarea
     id: console
     attributes:
-      label: Console lines starting with [SphereGMB]
-      description: DevTools → Console, filter "SphereGMB".
+      label: Console lines starting with [GBP Sphere]
+      description: DevTools → Console, filter "GBP Sphere".
       render: text
   - type: input
     id: version

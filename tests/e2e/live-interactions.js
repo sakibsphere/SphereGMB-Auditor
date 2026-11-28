@@ -1,5 +1,5 @@
 /**
- * SphereGMB: Live interaction test on Google Maps.
+ * GBP Sphere: Live interaction test on Google Maps.
  * Clicks the toolbar buttons on a real place page and on a results list and reports what happened.
  *
  * Usage: node tests/e2e/live-interactions.js [--mobile]

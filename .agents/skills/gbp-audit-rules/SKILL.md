@@ -1,6 +1,6 @@
 ---
 name: gbp-audit-rules
-description: "Rules for SphereGMB's Google Business Profile audit: scoring weights, which checks exist, and the sourcing standard for any guideline or number shown to users. Use when changing content/modules/audit-engine.js, the Dashboard, Photo/Post audit copy, or adding a new check."
+description: "Rules for GBP Sphere's Google Business Profile audit: scoring weights, which checks exist, and the sourcing standard for any guideline or number shown to users. Use when changing content/modules/audit-engine.js, the Dashboard, Photo/Post audit copy, or adding a new check."
 ---
 
 # GBP audit rules

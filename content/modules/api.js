@@ -1,5 +1,5 @@
 /**
- * SphereGMB: API Client Module
+ * GBP Sphere: API Client Module
  * Asks the service worker for a place's full public profile (categories, NAP, hours, etc.).
  */
 

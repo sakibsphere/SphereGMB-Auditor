@@ -1,4 +1,4 @@
-# Contributing to SphereGMB
+# Contributing to GBP Sphere
 
 Thanks for helping. Most contributions are one of three things: a Google page changed and a selector broke, a new audit check, or a free integration from the [roadmap](docs/ROADMAP.md).
 
@@ -37,4 +37,4 @@ All three parts of `verify` must pass. If you changed anything visible, attach a
 
 ## Reporting a bug
 
-Open an issue with the page URL, what you expected, what happened, a screenshot, and any `[SphereGMB]` lines from the DevTools console.
+Open an issue with the page URL, what you expected, what happened, a screenshot, and any `[GBP Sphere]` lines from the DevTools console.

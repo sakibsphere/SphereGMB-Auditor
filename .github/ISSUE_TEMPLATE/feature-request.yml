@@ -11,7 +11,7 @@ body:
   - type: textarea
     id: proposal
     attributes:
-      label: What should SphereGMB do?
+      label: What should GBP Sphere do?
   - type: checkboxes
     id: free
     attributes:

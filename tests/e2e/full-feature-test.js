@@ -1,5 +1,5 @@
 /**
- * SphereGMB: Full live feature matrix (Google Maps, popup, service worker).
+ * GBP Sphere: Full live feature matrix (Google Maps, popup, service worker).
  * Every check is independent: a failure is recorded and the run continues.
  *
  * Usage: node tests/e2e/full-feature-test.js [--mobile]
@@ -143,7 +143,7 @@ async function newTabFrom(context, trigger) {
       await report.click('.topbar [data-act="copy"]');
       await report.waitForTimeout(400);
       const text = await report.evaluate(() => window.__copied);
-      assert(/SphereGMB report: Tacombi/.test(text) && /Score: \d+\/100/.test(text) && /Checks:/.test(text), text.slice(0, 80));
+      assert(/GBP Sphere report: Tacombi/.test(text) && /Score: \d+\/100/.test(text) && /Checks:/.test(text), text.slice(0, 80));
       assert(!text.includes('\u2014'), 'em dash in the copied report');
       return `${text.split('\n').length} lines`;
     });

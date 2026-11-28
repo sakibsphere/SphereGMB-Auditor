@@ -1,5 +1,5 @@
 /*
- * SphereGMB popup: same tokens and signature (amethyst audit rule) as the in-page UI.
+ * GBP Sphere popup: same tokens and signature (amethyst audit rule) as the in-page UI.
  * Light by default; follows the system dark setting.
  */
 
@@ -246,6 +246,7 @@ code { font-size: 0.92em; padding: 0 3px; border-radius: 3px; background: var(--
 
 .popup-footer { padding: 10px 18px; border-top: 1px solid var(--line); }
 .footer-note { color: var(--muted); font-size: var(--fs-xs); }
+.footer-note a { color: var(--amethyst); font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
 
 /* Rank check tab and recent reports */
 .tool-input-block { display: block; width: 100%; margin-top: 4px; }

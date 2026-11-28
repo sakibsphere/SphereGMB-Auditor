@@ -5,7 +5,7 @@
 - **Live tests** in Chromium with the extension loaded (Playwright): the full feature matrix on Google Maps at 1366 px and 390 px, the interaction suite, and axe-core accessibility audits at 1366, 390 and 320 px.
 - **Independent code review** by a separate reviewer that did not write the code, over every module, ranked by impact. Each finding was checked against the code before fixing.
 - **Real-site checks**: the website audit run against a live business website with its live profile; rank parsing run on a live Local Finder page.
-- **Real browser on Google Search**: automated browsers get Google's "verify you're human" page (SphereGMB never tries to get around it), so the Search features were tested in a normal signed-in Brave profile, driven remotely by a browser-automation extension: knowledge panel and local pack widgets, People also ask, review export, photo and post audits, Maps list and place pages, and a real rank check run by the owner. The extension's own pages (report, rank check, popup) cannot be driven that way and are covered by the automated Chromium tests.
+- **Real browser on Google Search**: automated browsers get Google's "verify you're human" page (GBP Sphere never tries to get around it), so the Search features were tested in a normal signed-in Brave profile, driven remotely by a browser-automation extension: knowledge panel and local pack widgets, People also ask, review export, photo and post audits, Maps list and place pages, and a real rank check run by the owner. The extension's own pages (report, rank check, popup) cannot be driven that way and are covered by the automated Chromium tests.
 
 ## 2. Results
 
@@ -18,7 +18,7 @@ See section 5 for the final numbers.
 | 1 | High | Service worker | Profile cache never shrank; once storage was full every lookup failed and widgets said "Categories unavailable" | Pruning (expired, cap 800, oldest first) on start-up, install and every 40 writes; cache write can no longer break a lookup |
 | 2 | High | Rank check | Each rank search tab also ran the widget scan and fetched a profile for every Local Finder row (about 600 extra requests for 30 keywords) | Rank tabs only read positions |
 | 3 | High (found live) | Parser | Google sometimes returns the website as a `/url?q=` redirect; report links and the website check used the redirect | Unwrapped to the real URL |
-| 4 | Medium | Security | A crafted link could start an audit (`?sphereGmbAudit=`) or the PAA collector (`?sgmbPaa=`) | One-time code that only SphereGMB creates |
+| 4 | Medium | Security | A crafted link could start an audit (`?sphereGmbAudit=`) or the PAA collector (`?sgmbPaa=`) | One-time code that only GBP Sphere creates |
 | 5 | Medium | Security | CSV formula injection through review text, names, posts, answers | Cells starting with = + - @ tab CR get an apostrophe in every export |
 | 6 | Medium | Performance | Maps results pages re-scanned every 400 ms forever | List bar writes its label only when it changes |
 | 7 | Medium | Reliability | PageSpeed ran in the service worker, which Chrome stops after 30 s of waiting | Runs from the report page |
@@ -40,7 +40,7 @@ Sources: gbpcompass.com, its privacy policy and the Facebook reel caption (the v
 
 ## 4. Side by side
 
-| Capability | GBP Compass | SphereGMB 1.5.0 |
+| Capability | GBP Compass | GBP Sphere 1.5.0 |
 |---|---|---|
 | Price | Free for 5 audits a month, Pro planned | Free and unlimited, open source (MIT) |
 | Where it works | Google Maps side panel, desktop Chrome only | Google Maps and Google Search (knowledge panel, local pack, Local Finder), plus a full report page; works on any Chromium browser |
@@ -59,7 +59,7 @@ Sources: gbpcompass.com, its privacy policy and the Facebook reel caption (the v
 | Extra requests to Google | None (reads loaded data) | One profile request per listing shown (cached for 24 hours, capped) |
 | Brand on the report | Pro feature | Not yet |
 
-**Where SphereGMB is ahead**: coverage (Search and Maps, every listing), free and unlimited, open source, category validation, keyword finder, bulk rank check, review/photo/post depth, People also ask.
+**Where GBP Sphere is ahead**: coverage (Search and Maps, every listing), free and unlimited, open source, category validation, keyword finder, bulk rank check, review/photo/post depth, People also ask.
 
 **Where GBP Compass is ahead**: it sends no requests of its own to Google (lighter and less likely to be rate-limited), a side panel that stays open while browsing, a broken-link check, and announced white-label reports.
 

@@ -1,6 +1,6 @@
 ---
 name: release-checklist
-description: "Steps to cut a SphereGMB release: version bump in all three places, verification, packaging the zip, changelog, and Chrome Web Store notes. Use when the user asks to release, tag, package or publish the extension."
+description: "Steps to cut a GBP Sphere release: version bump in all three places, verification, packaging the zip, changelog, and Chrome Web Store notes. Use when the user asks to release, tag, package or publish the extension."
 ---
 
 # Release checklist

@@ -1,5 +1,5 @@
 /**
- * SphereGMB: bulk rank check, search-tab side.
+ * GBP Sphere: bulk rank check, search-tab side.
  *
  * The Rank check page (pages/rank.html) opens one Google search per keyword with
  * ?sgmbRank=<jobId>.<index>. In that tab this module waits for the results, reads the

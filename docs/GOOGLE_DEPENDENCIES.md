@@ -1,8 +1,8 @@
-# What SphereGMB depends on at Google
+# What GBP Sphere depends on at Google
 
-SphereGMB has no API of its own; it reads Google pages. When Google changes one of these, the feature in the right-hand column breaks. Use this list with `.agents/skills/selector-maintenance/` to find and fix the cause. Live checks: `npm run test:full`, `node tests/e2e/live-trusted-wheel.js`.
+GBP Sphere has no API of its own; it reads Google pages. When Google changes one of these, the feature in the right-hand column breaks. Use this list with `.agents/skills/selector-maintenance/` to find and fix the cause. Live checks: `npm run test:full`, `node tests/e2e/live-trusted-wheel.js`.
 
-| Google surface | What SphereGMB reads | Breaks if it changes |
+| Google surface | What GBP Sphere reads | Breaks if it changes |
 |---|---|---|
 | `www.google.com/maps/preview/place?pb=!1m2!1s<featureId>!2s` (internal, undocumented) | Full profile JSON: categories `[6][13]`, name `[6][11]`, address `[6][39]`, phone `[6][178]`, website `[6][7]`, hours `[6][203]`, attributes `[6][100]`, IDs `[6][10] [6][78] [6][89]` | Secondary categories, Export, Dashboard, score pill. Parser: `lib/place-parser.js` (fails soft: empty fields) |
 | Maps place URL `/maps/place/…!1s0x…:0x…` | Feature ID of the open place | Place widget data |
@@ -18,4 +18,4 @@ SphereGMB has no API of its own; it reads Google pages. When Google changes one 
 | People also ask `.related-question-pair[data-q]`, `[aria-expanded][role="button"]` | Questions and answers | People also ask collector |
 | Google PageSpeed Insights API v5 (official, documented) | Mobile performance | Website speed check (optional) |
 
-Google rate-limits automated traffic (HTTP 429 / CAPTCHA). SphereGMB caches profiles for 24 h, runs at most 3 lookups at once, retries network/429/5xx errors twice with backoff, and only automates pages when the user clicks a button.
+Google rate-limits automated traffic (HTTP 429 / CAPTCHA). GBP Sphere caches profiles for 24 h, runs at most 3 lookups at once, retries network/429/5xx errors twice with backoff, and only automates pages when the user clicks a button.

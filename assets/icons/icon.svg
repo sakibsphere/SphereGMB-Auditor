@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
-  <!-- Source for icon16..icon128.png: the SphereGMB mark (score ring + map pin) on a plum tile. -->
+  <!-- Source for icon16..icon128.png: the GBP Sphere mark (score ring + map pin) on a plum tile. -->
   <rect width="128" height="128" rx="28" fill="#250A33"/>
   <g transform="translate(14 14) scale(1.5625)">
     <path d="M50.4 17.2A24 24 0 1 1 41.9 10.1" fill="none" stroke="#B46BE0" stroke-width="7" stroke-linecap="round"/>

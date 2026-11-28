@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-# SphereGMB installer for macOS and Linux.
+# GBP Sphere installer for macOS and Linux.
 #
 #   curl -fsSL https://raw.githubusercontent.com/sakibsphere/SphereGMB-Auditor/main/install.sh | sh
 #
@@ -16,7 +16,7 @@ trap 'rm -rf "$TMP"' EXIT
 
 command -v unzip >/dev/null 2>&1 || { echo "Please install 'unzip' first."; exit 1; }
 
-echo "Downloading SphereGMB from github.com/${REPO} ..."
+echo "Downloading GBP Sphere from github.com/${REPO} ..."
 curl -fsSL "$URL" -o "$TMP/sphere-gmb.zip"
 unzip -q "$TMP/sphere-gmb.zip" -d "$TMP/ext"
 [ -f "$TMP/ext/manifest.json" ] || { echo "The download does not look like the extension (no manifest.json)."; exit 1; }
@@ -27,12 +27,12 @@ cp -R "$TMP/ext/." "$TARGET/"
 
 VERSION="$(sed -n 's/.*"version": *"\([^"]*\)".*/\1/p' "$TARGET/manifest.json" | head -n 1)"
 echo ""
-echo "SphereGMB v${VERSION} is in: ${TARGET}"
+echo "GBP Sphere v${VERSION} is in: ${TARGET}"
 echo ""
 echo "First time? Finish in your browser (Chrome, Edge, Brave):"
 echo "  1. Open chrome://extensions"
 echo "  2. Turn on 'Developer mode' (top right)"
 echo "  3. Click 'Load unpacked' and choose: ${TARGET}"
 echo ""
-echo "Updating? Click the reload arrow on the SphereGMB card in chrome://extensions."
+echo "Updating? Click the reload arrow on the GBP Sphere card in chrome://extensions."
 if command -v open >/dev/null 2>&1; then open "$TARGET"; elif command -v xdg-open >/dev/null 2>&1; then xdg-open "$TARGET" >/dev/null 2>&1 || true; fi

@@ -1,5 +1,5 @@
 /**
- * SphereGMB: Local SEO & Profile Auditor - Utilities Module
+ * GBP Sphere: Local SEO & Profile Auditor - Utilities Module
  */
 
 window.SphereGmb = window.SphereGmb || {};
@@ -22,7 +22,7 @@ window.SphereGmb = window.SphereGmb || {};
     gauge: '<svg class="sgmb-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 14 4-4"/><path d="M3.3 19a10 10 0 1 1 17.4 0"/></svg>',
     rank: '<svg class="sgmb-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/><path d="M11 8v6"/><path d="M8 11h6"/></svg>',
     questions: '<svg class="sgmb-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>',
-    // SphereGMB mark in one colour (score ring + map pin with a cut-out), see assets/icons/icon.svg.
+    // GBP Sphere mark in one colour (score ring + map pin with a cut-out), see assets/icons/icon.svg.
     sphere: '<svg class="sgmb-icon" width="14" height="14" viewBox="0 0 64 64" aria-hidden="true"><path d="M50.4 17.2A24 24 0 1 1 41.9 10.1" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round"/><circle cx="48.6" cy="12.4" r="4.4" fill="currentColor"/><path fill="currentColor" fill-rule="evenodd" d="M32 47.5c-.9 0-11-9.4-11-17.6a11 11 0 0 1 22 0c0 8.2-10.1 17.6-11 17.6zM27.7 29.6a4.3 4.3 0 1 0 8.6 0a4.3 4.3 0 1 0-8.6 0z"/></svg>'
   };
 
@@ -256,7 +256,7 @@ window.SphereGmb = window.SphereGmb || {};
     },
 
     log(...args) {
-      console.log('[SphereGMB]', ...args);
+      console.log('[GBP Sphere]', ...args);
     }
   };
 })(window.SphereGmb);

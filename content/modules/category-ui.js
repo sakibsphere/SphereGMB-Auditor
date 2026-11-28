@@ -1,5 +1,5 @@
 /**
- * SphereGMB: In-Page Category & Action Widget
+ * GBP Sphere: In-Page Category & Action Widget
  * Renders the Categories line; action-buttons.js adds the toolbar underneath.
  */
 

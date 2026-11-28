@@ -1,6 +1,6 @@
 ---
 name: selector-maintenance
-description: "Fix SphereGMB when Google changes Search or Maps markup: widget missing, categories stuck on Loading, review export stopping early, buttons in the wrong place. Use before editing any DOM selector in content/modules/dom-*.js or review-scraper.js."
+description: "Fix GBP Sphere when Google changes Search or Maps markup: widget missing, categories stuck on Loading, review export stopping early, buttons in the wrong place. Use before editing any DOM selector in content/modules/dom-*.js or review-scraper.js."
 ---
 
 # Selector maintenance

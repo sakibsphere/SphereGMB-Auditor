@@ -1,8 +1,8 @@
 # UI & code checklist audit, v1.3.1 (2026-11-24)
 
-The checklist combines 18 public UI/UX and "vibe-coded app" checklists (sources at the end). Items that only apply to websites (SEO, hero sections, logins, databases, payments, hosting, hiring, tool lists) were dropped. Each item below was checked against SphereGMB's in-page widget, inspector drawer, toasts and popup.
+The checklist combines 18 public UI/UX and "vibe-coded app" checklists (sources at the end). Items that only apply to websites (SEO, hero sections, logins, databases, payments, hosting, hiring, tool lists) were dropped. Each item below was checked against GBP Sphere's in-page widget, inspector drawer, toasts and popup.
 
-**How it was measured:** `node tests/e2e/ui-audit.js` (axe-core 4.10 with WCAG 2.2 A/AA + best-practice rules, scoped to SphereGMB's own UI, light and dark themes, at 1366, 390 and 320 px), plus keyboard, focus and target-size checks in the same script. Also `npm run verify` and `npm run test:full` / `test:full:mobile`.
+**How it was measured:** `node tests/e2e/ui-audit.js` (axe-core 4.10 with WCAG 2.2 A/AA + best-practice rules, scoped to GBP Sphere's own UI, light and dark themes, at 1366, 390 and 320 px), plus keyboard, focus and target-size checks in the same script. Also `npm run verify` and `npm run test:full` / `test:full:mobile`.
 
 **Result:** 0 axe violations in widget, drawer and popup, light and dark, at all three widths. Full feature matrix 26/26 at desktop and mobile.
 
@@ -100,7 +100,7 @@ Status: **Pass** (already met) · **Fixed** (failed, fixed in v1.3.1) · **Partl
 ## Copy
 | # | Item | Status | Notes |
 |---|---|---|---|
-| 58 | Descriptive labels | Fixed | Popup "Clear saved data", "Show SphereGMB on Google" |
+| 58 | Descriptive labels | Fixed | Popup "Clear saved data", "Show GBP Sphere on Google" |
 | 59 | No placeholders or unsourced numbers | Pass | Regression test guards it |
 | 60 | No dead controls | Fixed | Popup Maps link had `href="#"` |
 | 61 | Consistent tone | Pass | |
@@ -145,7 +145,7 @@ Status: **Pass** (already met) · **Fixed** (failed, fixed in v1.3.1) · **Partl
 | 84 | Code review | Pass | `/code-review`, CI |
 | 85 | JSDoc, changelog | Partly | Changelog yes; JSDoc on most, not all, functions |
 | 86 | Fresh clone works from README | Pass | |
-| 87 | Errors logged | Pass | `[SphereGMB]` console prefix |
+| 87 | Errors logged | Pass | `[GBP Sphere]` console prefix |
 | 88 | External dependencies listed | Fixed | `docs/GOOGLE_DEPENDENCIES.md` |
 
 **Open items:** keyboard shortcuts (15), spacing tokens (32), Nielsen review (67), files over 400 lines (82), coverage measurement (83), full JSDoc (85), screen-reader session (7), offline testing (52).

@@ -1,5 +1,5 @@
 /**
- * SphereGMB: Comprehensive Playwright E2E Live Test Suite
+ * GBP Sphere: Comprehensive Playwright E2E Live Test Suite
  */
 
 const { launchExtension, PROJECT_ROOT } = require('./launch');
@@ -94,7 +94,7 @@ async function main() {
         const toggleChecked = await page.isChecked('#enabledToggle');
 
         console.log(`Popup verification: Brand='${title.trim()}', Tag='${badge.trim()}', Status='${statusText.trim()}', Checked=${toggleChecked}`);
-        if (!title.includes('SphereGMB')) throw new Error(`Unexpected title: ${title}`);
+        if (!title.includes('GBP Sphere')) throw new Error(`Unexpected title: ${title}`);
         if (!toggleChecked) throw new Error('Toggle is not checked by default');
 
         await page.close();
@@ -218,7 +218,7 @@ async function main() {
           return document.querySelectorAll('[class*="sgmb-"]').length;
         });
 
-        console.log(`Injected SphereGMB elements on example.com: ${injectedCount}`);
+        console.log(`Injected GBP Sphere elements on example.com: ${injectedCount}`);
         if (injectedCount > 0) {
           throw new Error(`Extension injected ${injectedCount} elements onto non-Google page!`);
         }

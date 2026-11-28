@@ -1,5 +1,5 @@
 /**
- * SphereGMB: bulk rank check (extension page).
+ * GBP Sphere: bulk rank check (extension page).
  *
  * Opens one Google search per keyword in a background tab (?sgmbRank=<job>.<index>), waits for
  * content/modules/rank-runner.js in that tab to report the positions, closes the tab and pauses

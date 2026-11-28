@@ -1,5 +1,5 @@
 /**
- * SphereGMB: Media Audit (photos and videos)
+ * GBP Sphere: Media Audit (photos and videos)
  * Opens Google's photo viewer from the Search knowledge panel ("See photos"), walks every
  * category tab, loads every tile and counts photos and videos per category. Photos can be
  * downloaded at original size and videos as MP4. On Maps it opens a Search tab and runs there.
@@ -310,7 +310,7 @@ window.SphereGmb = window.SphereGmb || {};
     async download(btn, data, items, kind, ext) {
       const label = btn.querySelector('span');
       btn.disabled = true;
-      const folder = `SphereGMB/${ns.utils.slug(data.name, 'business')}`;
+      const folder = `GBP-Sphere/${ns.utils.slug(data.name, 'business')}`;
       const files = items.map((it, i) => ({ url: it.url, filename: `${folder}/${kind}-${String(i + 1).padStart(3, '0')}.${ext}` }));
       label.textContent = `Saving ${files.length}…`;
       const res = await ns.utils.sendMessage({ type: 'downloadMedia', payload: { files } });

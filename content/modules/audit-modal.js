@@ -1,5 +1,5 @@
 /**
- * SphereGMB: In-Page Profile Audit Dashboard
+ * GBP Sphere: In-Page Profile Audit Dashboard
  * Tabbed dialog: audit checklist, category breakdown, and the full public profile data.
  */
 
@@ -28,7 +28,7 @@ window.SphereGmb = window.SphereGmb || {};
 
   function buildReportText(d, result) {
     const lines = [
-      `SphereGMB audit: ${d.name || 'Unknown business'}`,
+      `GBP Sphere audit: ${d.name || 'Unknown business'}`,
       `Score: ${result.score}/100 (${result.grade})`,
       `Address: ${d.address || 'n/a'}`,
       `Phone: ${d.phone || 'n/a'}`,
@@ -275,7 +275,7 @@ window.SphereGmb = window.SphereGmb || {};
     /** Result block for the PageSpeed check. */
     renderPageSpeed(res) {
       const errors = {
-        quota: 'Google\'s shared free quota is used up for today. Add your own free PageSpeed API key in the SphereGMB popup → Settings, then try again.',
+        quota: 'Google\'s shared free quota is used up for today. Add your own free PageSpeed API key in the GBP Sphere popup → Settings, then try again.',
         bad_key: 'Google rejected the PageSpeed API key saved in Settings. Check it and try again.',
         timeout: 'PageSpeed Insights did not answer within 90 seconds. Try again later.',
         no_website: 'No website linked.',

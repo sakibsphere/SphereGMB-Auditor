@@ -1,5 +1,5 @@
 /**
- * SphereGMB: Google Search Live Test Script
+ * GBP Sphere: Google Search Live Test Script
  */
 
 const { launchExtension, PROJECT_ROOT } = require('./launch');
@@ -61,7 +61,7 @@ async function runSerpTest() {
     await page.screenshot({ path: shotPath06, fullPage: false });
     console.log(`[Screenshot] Saved: ${shotPath06}`);
 
-    // Inspect DOM for SphereGMB injections
+    // Inspect DOM for GBP Sphere injections
     const injectionInfo = await page.evaluate(() => {
       const kpRoot = document.querySelector('[data-sphere-gmb-root="1"], .sgmb-category-wrap, .sgmb-action-toolbar');
       const catBadges = Array.from(document.querySelectorAll('.sgmb-cat-chip')).map(el => el.textContent.trim());

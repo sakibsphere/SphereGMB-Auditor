@@ -1,5 +1,5 @@
 /**
- * SphereGMB: Unit test suite.
+ * GBP Sphere: Unit test suite.
  * Runs the real extension modules in a Node vm sandbox (no browser needed).
  */
 
@@ -45,7 +45,7 @@ function loadModules(files, windowOverrides = {}) {
 const { parsePlacePreview, featureIdToCid } = require('../lib/place-parser.js');
 const fixture = fs.readFileSync(path.join(__dirname, 'fixtures/place-preview-tacombi.json'), 'utf8');
 
-console.log('\n--- SphereGMB unit tests ---');
+console.log('\n--- GBP Sphere unit tests ---');
 
 test('manifest: MV3, files exist, content scripts limited to Search and Maps', () => {
   const m = JSON.parse(fs.readFileSync(path.join(ROOT, 'manifest.json'), 'utf8'));

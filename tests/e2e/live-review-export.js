@@ -1,5 +1,5 @@
 /**
- * SphereGMB: Live review export test on Google Search.
+ * GBP Sphere: Live review export test on Google Search.
  * Opens a business, opens Google's reviews dialog, clicks the injected "Export reviews" button
  * and checks that the CSV contains every review (not just the first page).
  *
@@ -42,7 +42,7 @@ function parseCsv(text) {
   try {
     const page = await context.newPage();
     const logs = [];
-    page.on('console', (m) => { if (/SphereGMB/.test(m.text())) logs.push(m.text()); });
+    page.on('console', (m) => { if (/GBP Sphere/.test(m.text())) logs.push(m.text()); });
     await page.goto(`https://www.google.com/search?q=${encodeURIComponent(QUERY)}&hl=en`, { waitUntil: 'domcontentloaded', timeout: 45000 });
     await page.waitForTimeout(4000);
     if (/unusual traffic|captcha/i.test(await page.evaluate(() => document.body.innerText.slice(0, 3000)))) {

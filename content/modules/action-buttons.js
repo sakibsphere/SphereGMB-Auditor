@@ -1,5 +1,5 @@
 /**
- * SphereGMB: Action Buttons Component
+ * GBP Sphere: Action Buttons Component
  * Two-row toolbar under the categories line:
  * - Row 1: [ Export ] [ Post Audit ] [ Media Audit ] [ Review Audit ]
  * - Row 2: [ Dashboard ] [ SERP Checker ]

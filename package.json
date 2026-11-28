@@ -1,7 +1,7 @@
 {
   "name": "sphere-gmb",
   "version": "1.6.0",
-  "description": "Open-source Chrome extension (Manifest V3) that audits Google Business Profiles on Google Search and Maps: hidden categories, full profile data, review CSV export, CID decoding and completeness scoring.",
+  "description": "GBP Sphere: free, open-source Google Business Profile audit tool (Chrome extension, Manifest V3) for Google Search and Maps: all categories, 16-check score, local competitors, Excel audit reports, review and media exports.",
   "directories": {
     "doc": "docs",
     "test": "test"

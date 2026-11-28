@@ -1,8 +1,8 @@
 /*
- * SphereGMB: in-page UI (v1.3 design system)
+ * GBP Sphere: in-page UI (v1.3 design system)
  *
  * Lives inside Google Search and Maps, so it borrows Google's type ("Google Sans", loaded by the
- * host page) and spacing, and marks every SphereGMB surface with one signature: a 3px amethyst
+ * host page) and spacing, and marks every GBP Sphere surface with one signature: a 3px amethyst
  * "audit rule" on the leading edge. Everything else stays quiet.
  *
  * Palette (Amethyst brand): ink #250A33, plum #451460, amethyst #6C2296, orchid #9838CE,

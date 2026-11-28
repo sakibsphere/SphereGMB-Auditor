@@ -1,4 +1,4 @@
-# SphereGMB: notes for coding agents
+# GBP Sphere: notes for coding agents
 
 Chrome extension (Manifest V3, plain JavaScript, no build step) that audits Google Business Profiles on Google Search and Maps.
 

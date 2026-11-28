@@ -1,5 +1,5 @@
 /**
- * Generate SphereGMB icons using Playwright and SVG in Amethyst Palette
+ * Generate GBP Sphere icons using Playwright and SVG in Amethyst Palette
  */
 
 const { chromium } = require('@playwright/test');

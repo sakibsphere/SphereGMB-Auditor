@@ -1,6 +1,6 @@
-# SphereGMB: Complete Installation & User Guide
+# GBP Sphere: Complete Installation & User Guide
 
-Welcome to **SphereGMB (Local SEO & Profile Auditor)**, a specialized Google Chrome extension engineered for SEO professionals, agency owners, local business consultants, and researchers.
+Welcome to **GBP Sphere (Local SEO & Profile Auditor)**, a specialized Google Chrome extension engineered for SEO professionals, agency owners, local business consultants, and researchers.
 
 This guide provides step-by-step instructions for installation, usage workflows on Google Search and Google Maps, decoding Place CIDs, conducting in-depth profile audits, and exporting data for client presentations.
 
@@ -8,12 +8,12 @@ This guide provides step-by-step instructions for installation, usage workflows 
 
 ## 1. Quick Installation (Chrome Developer Mode)
 
-SphereGMB is 100% self-contained and does not require complex build steps, node servers, or external logins.
+GBP Sphere is 100% self-contained and does not require complex build steps, node servers, or external logins.
 
 ### Step-by-Step Instructions:
 
 1. **Get the folder:**  
-   Easiest: run the one-line installer from the README ("Install", option 1), which puts it in a `SphereGMB` folder in your home folder. Or download [sphere-gmb.zip](https://github.com/sakibsphere/SphereGMB-Auditor/releases/latest/download/sphere-gmb.zip) and unzip it anywhere, for example your Documents folder.  
+   Easiest: run the one-line installer from the README ("Install", option 1), which puts it in a `GBP Sphere` folder in your home folder. Or download [sphere-gmb.zip](https://github.com/sakibsphere/SphereGMB-Auditor/releases/latest/download/sphere-gmb.zip) and unzip it anywhere, for example your Documents folder.  
    *(Make sure the folder contains `manifest.json`, `background/`, `content/`, and `popup/`)*.
 
 2. **Open Extensions in Google Chrome:**  
@@ -31,14 +31,14 @@ SphereGMB is 100% self-contained and does not require complex build steps, node 
 
 5. **Pin the Extension (Recommended):**  
    - Click the puzzle piece (Extensions) icon in Chrome’s top toolbar.
-   - Find **SphereGMB: Local SEO & Profile Auditor** and click the **Pin** icon so it appears in your browser toolbar.
+   - Find **GBP Sphere: Local SEO & Profile Auditor** and click the **Pin** icon so it appears in your browser toolbar.
 
 ---
 
-## 2. Using SphereGMB on Google Search (SERP)
+## 2. Using GBP Sphere on Google Search (SERP)
 
 ### A. Instant In-Page Toolbar
-When searching for any business (e.g., *Wilkerson Insurance Agency*, *Peter Luger Steak House*), SphereGMB renders directly beneath the primary rating bar:
+When searching for any business (e.g., *Wilkerson Insurance Agency*, *Peter Luger Steak House*), GBP Sphere renders directly beneath the primary rating bar:
 - **Categories Line:** `Categories:` followed by `[Primary Category]` in purple/amethyst with a small bolt icon, followed by all secondary categories chips.
 - **Button Row 1:**
   - `[ Export ]`: 1-click business profile CSV download.
@@ -51,12 +51,12 @@ When searching for any business (e.g., *Wilkerson Insurance Agency*, *Peter Luge
 
 ---
 
-## 3. Using SphereGMB on Google Maps
+## 3. Using GBP Sphere on Google Maps
 
 ### A. Single Place Details View
 1. Navigate to [Google Maps](https://www.google.com/maps).
 2. Search for or click any local business to open its detail panel.
-3. Right beneath the title and rating, SphereGMB renders:
+3. Right beneath the title and rating, GBP Sphere renders:
    - All category badges.
    - Direct Place CID link.
    - Action buttons.
@@ -70,7 +70,7 @@ When searching for any business (e.g., *Wilkerson Insurance Agency*, *Peter Luge
 
 ## 4. In-Page SEO Audit Dashboard
 
-Clicking the **Audit Profile** button on any listing opens the **SphereGMB Profile Auditor** modal overlay.
+Clicking the **Audit Profile** button on any listing opens the **GBP Sphere Profile Auditor** modal overlay.
 
 ### Key Sections:
 1. **Local SEO Readiness Score (0-100):**  
@@ -93,14 +93,14 @@ Clicking the **Audit Profile** button on any listing opens the **SphereGMB Profi
 
 ## 5. Standalone Tools in the Extension Popup
 
-Click the SphereGMB icon in your Chrome toolbar to open the control panel:
+Click the GBP Sphere icon in your Chrome toolbar to open the control panel:
 
 ### Tab 1: Overview
 - **Audit Engine Toggle:** Easily pause or activate DOM monitoring with a single click. When paused, all injected category tags and buttons cleanly unmount from your browser.
 - **Quick Test Buttons:** Quick shortcuts to test queries on Google Search and Maps.
 
 ### Tab 2: Place CID Decoder
-Google often conceals the true numeric Customer ID (CID) inside long hex URLs. SphereGMB includes a standalone decoder:
+Google often conceals the true numeric Customer ID (CID) inside long hex URLs. GBP Sphere includes a standalone decoder:
 1. Copy any Google Maps URL or hex Feature ID (`0x...:0x...`).
 2. Paste it into the **CID Decoder** input box in the popup.
 3. Click **Decode**.
@@ -117,7 +117,7 @@ Google often conceals the true numeric Customer ID (CID) inside long hex URLs. S
 
 ## 6. Exporting Profile Data (CSV Format)
 
-When you click **Export CSV**, SphereGMB creates a standardized spreadsheet ready for import into Microsoft Excel, Google Sheets, or your agency CRM:
+When you click **Export CSV**, GBP Sphere creates a standardized spreadsheet ready for import into Microsoft Excel, Google Sheets, or your agency CRM:
 
 | Column Header | Example Content | Purpose |
 |---|---|---|
@@ -145,6 +145,6 @@ A: Ensure the extension is enabled in the popup (green "Active & Monitoring" sta
 **Q: Can I use this for client reporting?**  
 A: Yes! Use the **Download CSV** or **Copy Report** button inside the audit modal. The Markdown report is ready to paste into client emails or pitch decks.
 
-**Q: Does SphereGMB send my search history to any external server?**  
-A: **No.** SphereGMB is completely local and privacy-preserving. All network requests go directly between your browser and Google Maps. Zero third-party telemetry, trackers, or external databases are involved.
+**Q: Does GBP Sphere send my search history to any external server?**  
+A: **No.** GBP Sphere is completely local and privacy-preserving. All network requests go directly between your browser and Google Maps. Zero third-party telemetry, trackers, or external databases are involved.
 

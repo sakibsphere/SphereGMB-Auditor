@@ -1,5 +1,5 @@
 /**
- * SphereGMB: Live check of the Maps "Export list" bar and the Dashboard website-speed check.
+ * GBP Sphere: Live check of the Maps "Export list" bar and the Dashboard website-speed check.
  * Usage: node tests/e2e/live-list-and-speed.js [--mobile]
  */
 

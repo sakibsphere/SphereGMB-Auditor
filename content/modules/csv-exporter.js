@@ -1,5 +1,5 @@
 /**
- * SphereGMB: CSV Exporter Module
+ * GBP Sphere: CSV Exporter Module
  * RFC 4180 CSV export of a business profile (UTF-8 with BOM so Excel opens it correctly).
  */
 

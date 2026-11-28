@@ -1,7 +1,7 @@
 /**
- * SphereGMB: UI quality audit (accessibility + interaction checks) on live Google Maps.
+ * GBP Sphere: UI quality audit (accessibility + interaction checks) on live Google Maps.
  *
- * Runs axe-core (WCAG 2.2 A/AA rules) scoped to SphereGMB's own UI only, the widget, the
+ * Runs axe-core (WCAG 2.2 A/AA rules) scoped to GBP Sphere's own UI only, the widget, the
  * report and rank check pages and the popup, plus checks axe can't do: touch target size, keyboard
  * reachability, visible focus, focus moving into / back out of the drawer.
  *

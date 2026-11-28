@@ -1,5 +1,5 @@
 /**
- * SphereGMB: Google Reviews Scraper & Exporter Module
+ * GBP Sphere: Google Reviews Scraper & Exporter Module
  * Extracts customer reviews from Google Search and Google Maps reviews dialogs
  * and exports them into an RFC 4180 compliant CSV file.
  */

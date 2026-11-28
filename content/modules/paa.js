@@ -1,5 +1,5 @@
 /**
- * SphereGMB: People also ask collector (Google Search results pages only).
+ * GBP Sphere: People also ask collector (Google Search results pages only).
  *
  * Options first (depth in levels, what else to collect, country and language), then it opens
  * questions in Google's own "People also ask" box level by level: questions Google shows at
@@ -91,7 +91,7 @@ window.SphereGmb = window.SphereGmb || {};
       btn.type = 'button';
       btn.className = 'sgmb-paa-trigger';
       btn.dataset.sphereGmbRoot = '1';
-      btn.innerHTML = `${ns.utils.icons.questions}<span>Collect all questions (SphereGMB)</span>`;
+      btn.innerHTML = `${ns.utils.icons.questions}<span>Collect all questions (GBP Sphere)</span>`;
       btn.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -112,7 +112,7 @@ window.SphereGmb = window.SphereGmb || {};
       try { history.replaceState(history.state, '', `${window.location.pathname}?${params}${window.location.hash}`); } catch (e) { /* ignore */ }
       let opts = {};
       try { opts = JSON.parse(raw); } catch (e) { opts = {}; }
-      // Only a search SphereGMB itself started (matching one-time code, under 2 minutes old).
+      // Only a search GBP Sphere itself started (matching one-time code, under 2 minutes old).
       try {
         chrome.storage.local.get('paaAutoRun', ({ paaAutoRun }) => {
           chrome.storage.local.remove('paaAutoRun');

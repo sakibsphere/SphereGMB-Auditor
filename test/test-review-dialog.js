@@ -1,5 +1,5 @@
 /**
- * SphereGMB: Review dialog test against real (anonymised) Google Search markup.
+ * GBP Sphere: Review dialog test against real (anonymised) Google Search markup.
  * Runs the real review-scraper module in jsdom.
  */
 

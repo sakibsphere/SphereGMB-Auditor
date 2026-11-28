@@ -1,5 +1,5 @@
 /**
- * SphereGMB: Live smoke test.
+ * GBP Sphere: Live smoke test.
  * Loads the unpacked extension in Chromium, opens a real Google Maps place and a
  * Google Search knowledge panel, and reports what the extension rendered.
  *
@@ -65,8 +65,8 @@ async function inspect(page) {
       const errors = [];
       page.on('console', (msg) => {
         const text = msg.text();
-        if (msg.type() === 'error' && /SphereGMB|sgmb|chrome-extension/i.test(text)) errors.push(text);
-        if (/\[SphereGMB\]/.test(text) && /error/i.test(text)) errors.push(text);
+        if (msg.type() === 'error' && /GBP Sphere|sgmb|chrome-extension/i.test(text)) errors.push(text);
+        if (/\[GBP Sphere\]/.test(text) && /error/i.test(text)) errors.push(text);
       });
       page.on('pageerror', (err) => errors.push(`pageerror: ${err.message}`));
 

@@ -1,5 +1,5 @@
 /**
- * SphereGMB: website check (Entity match + on-page) against sample HTML (jsdom).
+ * GBP Sphere: website check (Entity match + on-page) against sample HTML (jsdom).
  */
 
 const assert = require('assert');
@@ -42,7 +42,7 @@ function test(name, fn) {
   console.log(`  [PASS] ${name}`);
 }
 
-console.log('--- SphereGMB website check (jsdom) ---');
+console.log('--- GBP Sphere website check (jsdom) ---');
 
 test('A page that matches the profile passes the entity checks', () => {
   const doc = new JSDOM(good).window.document;

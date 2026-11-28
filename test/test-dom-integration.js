@@ -1,5 +1,5 @@
 /**
- * SphereGMB: DOM Integration Test
+ * GBP Sphere: DOM Integration Test
  * Simulates Google Search knowledge panel, Maps place panel and reviews dialog DOM,
  * verifies category chip rendering and 2-tier action buttons functionality.
  */
@@ -313,7 +313,7 @@ function pass(msg) {
   console.log(`  [PASS] ${msg}`);
 }
 
-console.log('--- SphereGMB DOM integration (Google Search knowledge panel) ---');
+console.log('--- GBP Sphere DOM integration (Google Search knowledge panel) ---');
 
 // Knowledge panel mock: #rhs > title, subtitle, address
 const kp = new MockElement('div', 'kp-header');

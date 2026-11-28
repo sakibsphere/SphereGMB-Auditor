@@ -1,6 +1,6 @@
 # Third-party notices
 
-SphereGMB itself is released under the MIT License (see [LICENSE](LICENSE)). It ships the
+GBP Sphere itself is released under the MIT License (see [LICENSE](LICENSE)). It ships the
 third-party material below, whose licenses require their notices to be kept with copies of
 the software.
 
@@ -67,7 +67,7 @@ repository states a license:
 - [lobstrio/google-business-categories](https://github.com/lobstrio/google-business-categories): Google Business Profile categories, industry groups and usage counts.
 - [jepto/google-business-profile-categories](https://github.com/jepto/google-business-profile-categories): Google's predefined services per category.
 
-Google category names are Google's. SphereGMB is an independent project and is not affiliated
+Google category names are Google's. GBP Sphere is an independent project and is not affiliated
 with or endorsed by Google.
 
 ## Development tools (not included in the extension)

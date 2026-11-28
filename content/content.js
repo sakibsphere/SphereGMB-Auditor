@@ -1,5 +1,5 @@
 /**
- * SphereGMB: Content Script Entry Point
+ * GBP Sphere: Content Script Entry Point
  * Scans Google Search / Maps for business profiles, watches SPA navigation, and runs the
  * automated audit workflows that the service worker opens in new tabs.
  */
@@ -111,9 +111,9 @@ window.SphereGmb = window.SphereGmb || {};
     lastUrl = window.location.href;
 
     const data = await resolveWorkflowData(auditType, nonce);
-    if (!data) return; // not a tab SphereGMB opened, or the payload expired
+    if (!data) return; // not a tab GBP Sphere opened, or the payload expired
     if (auditType === 'review') {
-      showAuditBanner('SphereGMB review export', 'Opening reviews…');
+      showAuditBanner('GBP Sphere review export', 'Opening reviews…');
       ns.reviewScraper.pendingAuditData = data;
       await ns.utils.sleep(1500);
       await ns.reviewScraper.startExport(data);

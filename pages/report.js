@@ -1,5 +1,5 @@
 /**
- * SphereGMB: full profile report (extension page).
+ * GBP Sphere: full profile report (extension page).
  *
  * Opened by the Dashboard button with ?id=<snapshot>. Shows every public field of the profile,
  * its IDs, real Google categories related to it, a keyword finder, the audit checklist and
@@ -661,8 +661,8 @@
   function render() {
     const main = document.getElementById('main');
     main.innerHTML = renderHero() + renderAuditSheetsShell() + renderFixes() + renderCompetitors() + renderInfo() + renderCategoriesShell() + renderKeywordsShell() + renderAudit() + renderSiteCheckShell() + renderLinks() + renderDetails()
-      + `<footer class="footer">Snapshot taken ${esc(new Date(window.__sgmbTs || Date.now()).toLocaleString())}. Public data read from Google by SphereGMB in your browser. Category list: community data from lobstr.io and Jepto (see README).</footer>`;
-    document.title = `${data.name || 'Profile'} | SphereGMB report`;
+      + `<footer class="footer">Snapshot taken ${esc(new Date(window.__sgmbTs || Date.now()).toLocaleString())}. Public data read from Google by GBP Sphere in your browser. Category list: community data from lobstr.io and Jepto (see README).</footer>`;
+    document.title = `${data.name || 'Profile'} | GBP Sphere report`;
     document.getElementById('actions').hidden = false;
     document.getElementById('nav').hidden = false;
     fillIcons();
@@ -715,7 +715,7 @@
         </div>
         <div>
           <h3>Used by similar businesses you viewed</h3>
-          ${peers.peers ? `<p class="section-desc" style="margin-bottom:8px">From ${peers.peers} profile${peers.peers === 1 ? '' : 's'} with a shared category that SphereGMB has loaded in this browser.</p>
+          ${peers.peers ? `<p class="section-desc" style="margin-bottom:8px">From ${peers.peers} profile${peers.peers === 1 ? '' : 's'} with a shared category that GBP Sphere has loaded in this browser.</p>
             <div class="list">${peers.list.map((p) => `
               <div class="list-row"><div>${esc(p.name)}</div><span class="num">${p.count} of ${peers.peers}</span>${copyBtn(p.name, p.name)}</div>`).join('') || '<p class="muted">They use the same categories as this profile.</p>'}</div>`
             : '<p class="muted">Open a few competitors on Google Search or Maps (for example the local pack for the primary category), then reload this report. Their categories show up here.</p>'}
@@ -913,7 +913,7 @@
 
   function reportText() {
     const lines = [
-      `SphereGMB report: ${data.name || 'Unknown business'}`,
+      `GBP Sphere report: ${data.name || 'Unknown business'}`,
       audit ? `Score: ${audit.score}/100 (${audit.grade})` : '',
       `Address: ${data.address || 'n/a'}`,
       `Phone: ${data.phone || 'n/a'}`,
@@ -1049,7 +1049,7 @@
       res = { error: err.name === 'TimeoutError' ? 'timeout' : 'network' };
     }
     const errors = {
-      quota: 'Google\'s shared free quota is used up for today. Add your own free PageSpeed API key in the SphereGMB popup, Settings tab, then try again.',
+      quota: 'Google\'s shared free quota is used up for today. Add your own free PageSpeed API key in the GBP Sphere popup, Settings tab, then try again.',
       bad_key: 'Google rejected the PageSpeed API key saved in Settings.',
       timeout: 'PageSpeed Insights did not answer within 90 seconds. Try again later.',
       no_website: 'No website linked.'
@@ -1079,7 +1079,7 @@
       lines.push('', ['Check', 'Status', 'Detail', 'Points'].join('\t'));
       audit.checks.forEach((c) => lines.push([c.label, STATUS_LABEL[c.status], c.detail, `${c.points}/${c.max}`].map(cell).join('\t')));
     }
-    return `${data.name || 'Business'}\tSphereGMB audit\t${new Date().toLocaleDateString()}\n${lines.join('\n')}`;
+    return `${data.name || 'Business'}\tGBP Sphere audit\t${new Date().toLocaleDateString()}\n${lines.join('\n')}`;
   }
 
   async function fetchText(url, ms = 15000) {
@@ -1214,7 +1214,7 @@
   /**
    * Competitors from the search the Dashboard was opened from. Opened from a single profile,
    * Google Maps is searched for the primary category from the business's own address. Last
-   * resort: profiles with the same primary category that SphereGMB has cached (no position).
+   * resort: profiles with the same primary category that GBP Sphere has cached (no position).
    */
   async function buildBenchmark(snap) {
     const BM = SphereGmbBenchmark;

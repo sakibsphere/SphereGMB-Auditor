@@ -1,4 +1,4 @@
-# SphereGMB installer for Windows (PowerShell).
+# GBP Sphere installer for Windows (PowerShell).
 #
 #   irm https://raw.githubusercontent.com/sakibsphere/SphereGMB-Auditor/main/install.ps1 | iex
 #
@@ -14,7 +14,7 @@ $zipUrl = "https://github.com/$repo/releases/latest/download/sphere-gmb.zip"
 $tmp = Join-Path ([IO.Path]::GetTempPath()) ("sphere-gmb-" + [guid]::NewGuid().ToString('N'))
 $zip = "$tmp.zip"
 
-Write-Host "Downloading SphereGMB from github.com/$repo ..."
+Write-Host "Downloading GBP Sphere from github.com/$repo ..."
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 # SPHEREGMB_ZIP (a local zip) and SPHEREGMB_DIR exist only for testing the installer.
 if ($env:SPHEREGMB_ZIP) { Copy-Item $env:SPHEREGMB_ZIP $zip } else { Invoke-WebRequest -Uri $zipUrl -OutFile $zip -UseBasicParsing }
@@ -30,12 +30,12 @@ Remove-Item $zip, $tmp -Recurse -Force -ErrorAction SilentlyContinue
 
 $version = (Get-Content (Join-Path $target 'manifest.json') -Raw | ConvertFrom-Json).version
 Write-Host ""
-Write-Host "SphereGMB v$version is in: $target" -ForegroundColor Green
+Write-Host "GBP Sphere v$version is in: $target" -ForegroundColor Green
 Write-Host ""
 Write-Host "First time? Finish in your browser (Chrome, Edge, Brave):"
 Write-Host "  1. Open chrome://extensions  (edge://extensions or brave://extensions)"
 Write-Host "  2. Turn on 'Developer mode' (top right)"
 Write-Host "  3. Click 'Load unpacked' and choose: $target"
 Write-Host ""
-Write-Host "Updating? Click the reload arrow on the SphereGMB card in chrome://extensions."
+Write-Host "Updating? Click the reload arrow on the GBP Sphere card in chrome://extensions."
 if (-not $env:SPHEREGMB_ZIP) { Start-Process explorer.exe $target }

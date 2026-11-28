@@ -1,5 +1,5 @@
 /**
- * SphereGMB: Checks that the service worker's trusted wheel (chrome.debugger) really scrolls
+ * GBP Sphere: Checks that the service worker's trusted wheel (chrome.debugger) really scrolls
  * a Google page and makes it lazy-load more content. Uses the Maps results feed because
  * automated sessions get a CAPTCHA on Google Search.
  *

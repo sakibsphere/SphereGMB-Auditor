@@ -1,5 +1,5 @@
 /**
- * SphereGMB: Google SERP Adapter Module
+ * GBP Sphere: Google SERP Adapter Module
  * Knowledge Panel and Local Pack integration for Google Search.
  *
  * Google's class names on Search rotate often; this adapter leans on the more stable hooks

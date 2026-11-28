@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- **New name: GBP Sphere** (was SphereGMB). "GMB" stood for Google My Business, which Google renamed to Google Business Profile. The repository, the download link and the install folder keep their old names, so existing installs and saved data carry on.
+- New logo: a score ring around a map pin, in the toolbar icon, popup, Dashboard and audit badge.
+- Media audit downloads now go to `Downloads/GBP-Sphere/`.
+- Website with a narrated promo video in `website/`.
+
 ## 1.6.0, 2026-11-25
 
 Accurate numbers, a full agency audit you can download, and a free speed test.

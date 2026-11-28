@@ -1,5 +1,5 @@
 /**
- * SphereGMB: Playwright Extension Launcher & Live Test Harness
+ * GBP Sphere: Playwright Extension Launcher & Live Test Harness
  */
 
 const { chromium } = require('@playwright/test');

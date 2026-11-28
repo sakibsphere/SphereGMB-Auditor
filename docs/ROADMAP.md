@@ -1,4 +1,4 @@
-# SphereGMB: Audit, Fixes & Roadmap
+# GBP Sphere: Audit, Fixes & Roadmap
 
 Status as of **2026-11-19 (v1.2.0)**. This document records what was broken, what was fixed, what is still open, and where the extension should go next, with a bias toward free and open-source building blocks so anyone can clone the repo, load it unpacked, and use it without paying for anything.
 
@@ -156,7 +156,7 @@ Still open from Phase 1–2: competitor category gap, locale-aware review dates,
 - Photo freshness: each photo's age is shown in the viewer ("a year ago").
 - Popular times on Maps (hourly busyness histogram).
 
-**About the installed "People Also Ask" extension:** its own code has no open-source license (only bundled flag-icons and Lucide are licensed), so it was read only to understand the technique. SphereGMB's collector is an original implementation. Note that, despite describing itself as "100% local", that extension fetches data from its own server (`people-also-ask.vercel.app`); SphereGMB's collector makes no network calls.
+**About the installed "People Also Ask" extension:** its own code has no open-source license (only bundled flag-icons and Lucide are licensed), so it was read only to understand the technique. GBP Sphere's collector is an original implementation. Note that, despite describing itself as "100% local", that extension fetches data from its own server (`people-also-ask.vercel.app`); GBP Sphere's collector makes no network calls.
 
 **"Install everything automatically":** a Chrome extension cannot install software on the computer, and it doesn't need to. Everything runs inside the browser in JavaScript; there is nothing else to install. On-device AI uses the model built into Chrome (Gemini Nano via the Prompt API), which Chrome downloads and manages itself.
 

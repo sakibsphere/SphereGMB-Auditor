@@ -1,5 +1,5 @@
 /**
- * SphereGMB: CID & Identifier Decoder Module
+ * GBP Sphere: CID & Identifier Decoder Module
  * Formulaic conversion of hexadecimal Google Feature IDs to 64-bit BigInt Place CIDs.
  */
 

@@ -1,9 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "SphereGMB: Local SEO & Profile Auditor",
-  "short_name": "SphereGMB",
+  "name": "GBP Sphere: Free Google Business Profile Audit Tool",
+  "short_name": "GBP Sphere",
   "version": "1.6.0",
-  "description": "Open-source Google Business Profile auditor for Google Search & Maps: hidden categories, full profile data, review export, CID decoding and completeness scoring.",
+  "description": "Free, open-source Google Business Profile audit tool for Search and Maps: categories, a 16-check score, competitors, Excel.",
   "icons": {
     "16": "assets/icons/icon16.png",
     "32": "assets/icons/icon32.png",
@@ -20,7 +20,7 @@
       "128": "assets/icons/icon128.png"
     },
     "default_popup": "popup/popup.html",
-    "default_title": "SphereGMB Auditor"
+    "default_title": "GBP Sphere: free GBP audit"
   },
   "background": {
     "service_worker": "background/service-worker.js"

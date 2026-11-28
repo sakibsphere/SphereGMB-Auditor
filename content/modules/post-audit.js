@@ -1,5 +1,5 @@
 /**
- * SphereGMB: Post Audit
+ * GBP Sphere: Post Audit
  * Reads every Google post ("Updates") of the business from Google Search, expands each one to
  * its full text, and analyses cadence, length, calls to action and content issues
  * (lib/post-analytics.js). On Maps it opens a Search tab and runs there.

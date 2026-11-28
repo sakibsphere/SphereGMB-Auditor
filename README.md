@@ -1,6 +1,6 @@
-# SphereGMB: Google Business Profile Auditor
+# GBP Sphere: Free Google Business Profile Audit Tool
 
-Free, open-source Chrome extension (Manifest V3) for auditing Google Business Profiles right on Google Search and Google Maps. No account, no API key, no server.
+GBP Sphere is a free, open-source Google Business Profile audit tool (the profile Google used to call Google My Business). It runs as a Chrome extension right on Google Search and Google Maps. No account, no API key, no server. A tool by [Sakib Sphere](https://sakibsphere.com). Formerly called SphereGMB.
 
 ## What it does
 
@@ -26,7 +26,7 @@ Free, open-source Chrome extension (Manifest V3) for auditing Google Business Pr
 
 ## Install
 
-Works in Chrome, Edge, Brave and other Chromium browsers on a computer. SphereGMB is not in the Chrome Web Store yet, so it is installed as an "unpacked" extension: download a folder, then point the browser at it once.
+Works in Chrome, Edge, Brave and other Chromium browsers on a computer. GBP Sphere is not in the Chrome Web Store yet, so it is installed as an "unpacked" extension: download a folder, then point the browser at it once.
 
 ### Option 1: one command (easiest)
 
@@ -42,7 +42,7 @@ irm https://raw.githubusercontent.com/sakibsphere/SphereGMB-Auditor/main/install
 curl -fsSL https://raw.githubusercontent.com/sakibsphere/SphereGMB-Auditor/main/install.sh | sh
 ```
 
-It downloads the latest release into a `SphereGMB` folder in your home folder and tells you the last step. Read the script first if you like: [install.ps1](install.ps1), [install.sh](install.sh).
+It downloads the latest release into a `GBP Sphere` folder in your home folder and tells you the last step. Read the script first if you like: [install.ps1](install.ps1), [install.sh](install.sh).
 
 ### Option 2: download the zip
 
@@ -62,7 +62,7 @@ git clone https://github.com/sakibsphere/SphereGMB-Auditor.git
 3. Click **Load unpacked** and choose the folder that contains `manifest.json`.
 4. Open any business on [Google Maps](https://www.google.com/maps): the Categories line and toolbar appear under the business name.
 
-**Updating:** run the same command again (or unzip the new version over the same folder), then click the reload arrow on the SphereGMB card in `chrome://extensions`. Keeping the same folder keeps your saved data.
+**Updating:** run the same command again (or unzip the new version over the same folder), then click the reload arrow on the GBP Sphere card in `chrome://extensions`. Keeping the same folder keeps your saved data.
 
 More detail: [user guide](docs/INSTALL_AND_USER_GUIDE.md).
 
@@ -78,17 +78,17 @@ That endpoint is not an official, documented Google API: it can change without n
 |---|---|
 | `storage` | On/off switch, the profile cache (refreshed after 24 hours, capped at 800 places, oldest removed first), saved reports and rank history |
 | `scripting` | Free website speed check only: reads Chrome's own timing data (load time, LCP, layout shift, page weight) inside the business website, in a small window you see, after you click **Measure speed** and allow that one site |
-| `downloads` | Media audit: saves photos and videos into `Downloads/SphereGMB/<business>/` when you click Download |
+| `downloads` | Media audit: saves photos and videos into `Downloads/GBP Sphere/<business>/` when you click Download |
 | `https://www.google.com/*` | Profile lookups from the service worker, and Google's search suggestions for the keyword finder |
 | Optional: the business's own website | Website check only. Not granted at install: when you click **Check the website**, Chrome asks for that one site (`optional_host_permissions`), and you can remove it later in the extension's settings. The page is read as plain HTML; none of its scripts run. |
-| Optional: `maps.app.goo.gl` | Only when you add a competitor by its Maps Share link: Chrome asks once, and SphereGMB follows that one link to the place it points to. Full Google Maps links and CIDs need no extra permission. |
+| Optional: `maps.app.goo.gl` | Only when you add a competitor by its Maps Share link: Chrome asks once, and GBP Sphere follows that one link to the place it points to. Full Google Maps links and CIDs need no extra permission. |
 | `debugger` | Review export only. Google's reviews dialog loads the next page only on a real mouse-wheel event, which a normal extension script can't produce. During an export the extension attaches to that one tab, sends wheel events over the review list, and detaches when the CSV is saved. Chrome shows a "started debugging this browser" bar meanwhile; pressing **Cancel** switches to assisted mode (you scroll, it keeps collecting). |
 
 Content scripts run only on Google Search and Google Maps pages (and on Google's "unusual traffic" page, only to stop a rank check). There are no analytics. Network requests besides Google happen only when you click: the category tools download the public category list once a month from GitHub (no host permission needed), and the research links open the sites you click.
 
 ### Category data
 
-SphereGMB does not ship a copy of Google's category list. The first time you open the category tools, your browser downloads two community-maintained lists from GitHub: [lobstrio/google-business-categories](https://github.com/lobstrio/google-business-categories) (categories, industry groups, usage counts) and [jepto/google-business-profile-categories](https://github.com/jepto/google-business-profile-categories) (Google's predefined services per category). Neither repository states a license, so they are fetched at runtime rather than bundled. Google publishes the list only through the Business Profile API, which needs approved OAuth access.
+GBP Sphere does not ship a copy of Google's category list. The first time you open the category tools, your browser downloads two community-maintained lists from GitHub: [lobstrio/google-business-categories](https://github.com/lobstrio/google-business-categories) (categories, industry groups, usage counts) and [jepto/google-business-profile-categories](https://github.com/jepto/google-business-profile-categories) (Google's predefined services per category). Neither repository states a license, so they are fetched at runtime rather than bundled. Google publishes the list only through the Business Profile API, which needs approved OAuth access.
 
 ## Development
 
@@ -131,4 +131,4 @@ Contributions welcome, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 [MIT](LICENSE), copyright Sakib's Sphere. Some icons come from Lucide (ISC) and Feather (MIT); their notices and the data sources are listed in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
-SphereGMB is an independent project and is not affiliated with or endorsed by Google.
+GBP Sphere is an independent project and is not affiliated with or endorsed by Google.

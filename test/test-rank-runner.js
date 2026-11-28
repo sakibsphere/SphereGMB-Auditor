@@ -1,5 +1,5 @@
 /**
- * SphereGMB: rank runner against Local Finder / web results markup (jsdom).
+ * GBP Sphere: rank runner against Local Finder / web results markup (jsdom).
  * Markup shape copied from a live Local Finder page (Nov 2026), names and IDs anonymised.
  */
 
@@ -47,7 +47,7 @@ function test(name, fn) {
   console.log(`  [PASS] ${name}`);
 }
 
-console.log('--- SphereGMB rank runner (jsdom) ---');
+console.log('--- GBP Sphere rank runner (jsdom) ---');
 
 test('Local Finder rows: ads skipped in positions, names cleaned, CID from the Directions link', () => {
   const rows = rr.readLocalRows(sandboxWindow.document);

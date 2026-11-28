@@ -1,5 +1,5 @@
 /**
- * SphereGMB: Local SEO & Profile Auditor
+ * GBP Sphere: Local SEO & Profile Auditor
  * Manifest V3 service worker: place profile resolution, caching, and audit-tab routing.
  */
 
@@ -34,7 +34,7 @@ chrome.runtime.onInstalled.addListener(async (details) => {
   if (legacy.length) await chrome.storage.local.remove(legacy);
   await pruneCache({ force: true }).catch(() => {});
 
-  console.log('[SphereGMB] installed/updated:', details.reason);
+  console.log('[GBP Sphere] installed/updated:', details.reason);
 });
 
 // One handler per message type. Every handler's result (or error) is sent back, so a failure
@@ -68,7 +68,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     .then(() => handler(message, sender))
     .then((res) => sendResponse(res === undefined ? { success: true } : res))
     .catch((err) => {
-      console.warn(`[SphereGMB] ${message.type} failed:`, err);
+      console.warn(`[GBP Sphere] ${message.type} failed:`, err);
       sendResponse({ error: err?.message || 'failed' });
     });
   return true;
@@ -128,7 +128,7 @@ async function getPlaceProfile(featureId) {
       const cached = (await chrome.storage.local.get(cacheKey))[cacheKey];
       if (cached && Date.now() - cached.ts < ttl) return cached.data;
     } catch (e) {
-      console.warn('[SphereGMB] cache read failed:', e);
+      console.warn('[GBP Sphere] cache read failed:', e);
     }
 
     // Feature IDs are global, so always resolve against google.com (the only host permission).
@@ -145,7 +145,7 @@ async function getPlaceProfile(featureId) {
         await chrome.storage.local.set({ [cacheKey]: { data: profile, ts: Date.now() } });
         if (++writesSincePrune >= PRUNE_EVERY_WRITES) pruneCache().catch(() => {});
       } catch (e) {
-        console.warn('[SphereGMB] cache write failed, pruning:', e);
+        console.warn('[GBP Sphere] cache write failed, pruning:', e);
         pruneCache({ force: true }).catch(() => {});
       }
     }
@@ -156,7 +156,7 @@ async function getPlaceProfile(featureId) {
   try {
     return await task;
   } catch (err) {
-    console.warn(`[SphereGMB] profile lookup failed for ${featureId}:`, err);
+    console.warn(`[GBP Sphere] profile lookup failed for ${featureId}:`, err);
     return { categories: [], error: err.message };
   } finally {
     inFlight.delete(featureId);
@@ -376,7 +376,7 @@ async function runPageSpeed(url) {
 }
 
 /**
- * Saves Google-hosted photos/videos into Downloads/SphereGMB/<business>/ (media audit).
+ * Saves Google-hosted photos/videos into Downloads/GBP-Sphere/<business>/ (media audit).
  * Only googleusercontent / ggpht URLs are accepted.
  */
 async function downloadMedia(files) {

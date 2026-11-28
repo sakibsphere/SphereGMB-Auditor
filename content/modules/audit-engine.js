@@ -1,5 +1,5 @@
 /**
- * SphereGMB: Audit Engine
+ * GBP Sphere: Audit Engine
  * Client-side Google Business Profile checks. Pure functions, no DOM access, so they can be
  * unit-tested in Node and reused by the report page.
  *
