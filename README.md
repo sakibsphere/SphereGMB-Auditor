@@ -1,6 +1,6 @@
 # GBP Sphere: Free Google Business Profile Audit Tool
 
-GBP Sphere is a free, open-source Google Business Profile audit tool (the profile Google used to call Google My Business). It runs as a Chrome extension right on Google Search and Google Maps. No account, no API key, no server. A tool by [Sakib Sphere](https://sakibsphere.com). Formerly called SphereGMB.
+GBP Sphere is a free, open-source Google Business Profile audit tool (the profile Google used to call Google My Business). It runs as a Chrome extension right on Google Search and Google Maps. No account, no API key, no server. A tool by [Sakib's Sphere](https://sakibsphere.com), made by [Nazrul Huda Sakib](https://linkedin.com/in/sakibsphere). Formerly called SphereGMB.
 
 ## What it does
 

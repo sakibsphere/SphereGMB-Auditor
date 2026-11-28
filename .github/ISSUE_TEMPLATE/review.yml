@@ -1,0 +1,41 @@
+name: Review
+description: Rate GBP Sphere and tell other people how it worked for you
+title: "Review: "
+labels: ["review"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking a minute to review GBP Sphere. Reviews are public and help other local SEOs and business owners find a free Google Business Profile audit tool they can trust.
+  - type: dropdown
+    id: rating
+    attributes:
+      label: Your rating
+      options:
+        - 5 stars
+        - 4 stars
+        - 3 stars
+        - 2 stars
+        - 1 star
+    validations:
+      required: true
+  - type: textarea
+    id: used-for
+    attributes:
+      label: What did you use GBP Sphere for?
+      placeholder: For example, auditing a client's profile before an SEO proposal
+    validations:
+      required: true
+  - type: textarea
+    id: liked
+    attributes:
+      label: What worked well?
+  - type: textarea
+    id: better
+    attributes:
+      label: What could be better?
+  - type: input
+    id: role
+    attributes:
+      label: Your role (optional)
+      placeholder: Agency, freelancer, in-house marketer or business owner
